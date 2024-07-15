@@ -1,6 +1,7 @@
 package com.yuzarsif.gameservice.controller;
 
 import com.yuzarsif.gameservice.dto.GameDto;
+import com.yuzarsif.gameservice.dto.request.CreateGameRequest;
 import com.yuzarsif.gameservice.dto.request.SearchByGenreRequest;
 import com.yuzarsif.gameservice.service.GameService;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,12 @@ public class GameController {
 
     public GameController(GameService gameService) {
         this.gameService = gameService;
+    }
+
+    @PostMapping
+    public ResponseEntity<String> save(@RequestBody CreateGameRequest request) {
+        gameService.create(request);
+        return ResponseEntity.ok("Game created successfully");
     }
 
     @GetMapping
