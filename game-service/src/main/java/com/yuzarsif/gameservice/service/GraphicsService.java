@@ -1,11 +1,14 @@
 package com.yuzarsif.gameservice.service;
 
+import com.yuzarsif.gameservice.dto.GraphicsDto;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Graphics;
 import com.yuzarsif.gameservice.repository.GraphicsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class GraphicsService {
@@ -22,10 +25,18 @@ public class GraphicsService {
                 .orElseThrow(() -> new EntityNotFoundException("Graphics not found with id " + id));
     }
 
-    public List<Graphics> findByIdList(List<Long> idList) {
+    public Set<Graphics> findByIdList(List<Long> idList) {
         return idList
                 .stream()
                 .map(this::findById)
+                .collect(Collectors.toSet());
+    }
+
+    public List<GraphicsDto> findByName(String search) {
+        return graphicsRepository
+                .findByBrandContainingOrVersionContaining(search, search)
+                .stream()
+                .map(GraphicsDto::convert)
                 .toList();
     }
 }

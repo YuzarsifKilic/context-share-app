@@ -27,7 +27,7 @@ public class GameController {
 
     @GetMapping
     public ResponseEntity<List<GameDto>> findAll(@RequestParam(defaultValue = "0", required = false) Integer page,
-                                                @RequestParam(defaultValue = "0", required = false) Integer size) {
+                                                @RequestParam(defaultValue = "20", required = false) Integer size) {
         return ResponseEntity.ok(gameService.findAll(page, size));
     }
 
@@ -35,7 +35,7 @@ public class GameController {
     public ResponseEntity<List<GameDto>> findByNameContaining(
             @RequestParam String name,
             @RequestParam(defaultValue = "0", required = false) Integer page,
-            @RequestParam(defaultValue = "0", required = false) Integer size) {
+            @RequestParam(defaultValue = "20", required = false) Integer size) {
         return ResponseEntity.ok(gameService.findByNameContaining(name, page, size));
     }
 
