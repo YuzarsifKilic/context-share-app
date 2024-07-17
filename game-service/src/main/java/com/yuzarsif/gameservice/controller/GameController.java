@@ -1,6 +1,7 @@
 package com.yuzarsif.gameservice.controller;
 
 import com.yuzarsif.gameservice.dto.GameDto;
+import com.yuzarsif.gameservice.dto.PageResponse;
 import com.yuzarsif.gameservice.dto.request.CreateGameRequest;
 import com.yuzarsif.gameservice.dto.request.SearchByGenreRequest;
 import com.yuzarsif.gameservice.service.GameService;
@@ -26,13 +27,13 @@ public class GameController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GameDto>> findAll(@RequestParam(defaultValue = "0", required = false) Integer page,
+    public ResponseEntity<PageResponse<GameDto>> findAll(@RequestParam(defaultValue = "0", required = false) Integer page,
                                                 @RequestParam(defaultValue = "20", required = false) Integer size) {
         return ResponseEntity.ok(gameService.findAll(page, size));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<GameDto>> findByNameContaining(
+    public ResponseEntity<PageResponse<GameDto>> findByNameContaining(
             @RequestParam String name,
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "20", required = false) Integer size) {
@@ -40,7 +41,7 @@ public class GameController {
     }
 
     @PostMapping("/search/genre")
-    public ResponseEntity<List<GameDto>> findByGenres(
+    public ResponseEntity<PageResponse<GameDto>> findByGenres(
             @RequestBody SearchByGenreRequest searchByGenre) {
         return ResponseEntity.ok(gameService.findByGenres(searchByGenre));
     }

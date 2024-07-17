@@ -1,12 +1,14 @@
 package com.yuzarsif.gameservice.service;
 
 import com.yuzarsif.gameservice.dto.GameDto;
+import com.yuzarsif.gameservice.dto.PageResponse;
 import com.yuzarsif.gameservice.dto.request.CreateGameRequest;
 import com.yuzarsif.gameservice.dto.request.SearchByGenreRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.*;
 import com.yuzarsif.gameservice.repository.GameRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -73,31 +75,64 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    public List<GameDto> findAll(Integer page, Integer size) {
+    public PageResponse<GameDto> findAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return gameRepository.findAll(pageable)
+        Page<Game> games = gameRepository.findAll(pageable);
+
+        List<GameDto> gameResponse = gameRepository.findAll(pageable)
                 .stream()
                 .map(GameDto::convert)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PageResponse<>(
+                gameResponse,
+                games.getNumber(),
+                games.getSize(),
+                games.getTotalElements(),
+                games.getTotalPages(),
+                games.isFirst(),
+                games.isLast());
     }
 
-    public List<GameDto> findByNameContaining(String name, Integer page, Integer size) {
+    public PageResponse<GameDto> findByNameContaining(String name, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return gameRepository.findByNameContaining(name, pageable)
+        Page<Game> games = gameRepository.findByNameContaining(name, pageable);
+
+        List<GameDto> gameResponse = games
                 .stream()
                 .map(GameDto::convert)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PageResponse<>(
+                gameResponse,
+                games.getNumber(),
+                games.getSize(),
+                games.getTotalElements(),
+                games.getTotalPages(),
+                games.isFirst(),
+                games.isLast());
     }
 
-    public List<GameDto> findByGenres(SearchByGenreRequest searchByGenre) {
+    public PageResponse<GameDto> findByGenres(SearchByGenreRequest searchByGenre) {
         Pageable pageable = PageRequest.of(searchByGenre.page(), searchByGenre.size());
 
-        return gameRepository.findByGenres(searchByGenre.genres(), pageable)
+        Page<Game> games = gameRepository.findByGenres(searchByGenre.genres(), pageable);
+
+        List<GameDto> gameResponse = gameRepository.findByGenres(searchByGenre.genres(), pageable)
                 .stream()
                 .map(GameDto::convert)
-                .collect(Collectors.toList());
+                .toList();
+
+        return new PageResponse<>(
+                gameResponse,
+                games.getNumber(),
+                games.getSize(),
+                games.getTotalElements(),
+                games.getTotalPages(),
+                games.isFirst(),
+                games.isLast());
     }
 
     protected Game findById(Long id) {
