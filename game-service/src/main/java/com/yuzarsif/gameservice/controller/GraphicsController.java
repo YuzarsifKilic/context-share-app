@@ -1,12 +1,10 @@
 package com.yuzarsif.gameservice.controller;
 
 import com.yuzarsif.gameservice.dto.GraphicsDto;
+import com.yuzarsif.gameservice.dto.request.CreateGraphicsRequest;
 import com.yuzarsif.gameservice.service.GraphicsService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +16,12 @@ public class GraphicsController {
 
     public GraphicsController(GraphicsService graphicsService) {
         this.graphicsService = graphicsService;
+    }
+
+    @PostMapping
+    public ResponseEntity<String> create(@RequestBody CreateGraphicsRequest request) {
+        graphicsService.create(request);
+        return ResponseEntity.ok("Graphics created successfully");
     }
 
     @GetMapping("/search")

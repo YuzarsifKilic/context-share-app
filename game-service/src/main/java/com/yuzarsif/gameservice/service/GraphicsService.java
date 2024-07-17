@@ -1,6 +1,7 @@
 package com.yuzarsif.gameservice.service;
 
 import com.yuzarsif.gameservice.dto.GraphicsDto;
+import com.yuzarsif.gameservice.dto.request.CreateGraphicsRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Graphics;
 import com.yuzarsif.gameservice.repository.GraphicsRepository;
@@ -38,5 +39,15 @@ public class GraphicsService {
                 .stream()
                 .map(GraphicsDto::convert)
                 .toList();
+    }
+
+    public void create(CreateGraphicsRequest request) {
+        Graphics graphics = Graphics
+                .builder()
+                .brand(request.brand())
+                .version(request.version())
+                .build();
+
+        graphicsRepository.save(graphics);
     }
 }

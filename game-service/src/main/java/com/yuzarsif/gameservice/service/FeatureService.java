@@ -1,5 +1,6 @@
 package com.yuzarsif.gameservice.service;
 
+import com.yuzarsif.gameservice.dto.request.CreateFeatureRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Feature;
 import com.yuzarsif.gameservice.repository.FeatureRepository;
@@ -29,5 +30,14 @@ public class FeatureService {
                 .stream()
                 .map(this::findById)
                 .collect(Collectors.toSet());
+    }
+
+    public void create(CreateFeatureRequest request) {
+        Feature feature = Feature
+                .builder()
+                .name(request.name())
+                .build();
+
+        featureRepository.save(feature);
     }
 }

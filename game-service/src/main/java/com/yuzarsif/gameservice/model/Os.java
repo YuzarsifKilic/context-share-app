@@ -20,7 +20,8 @@ public class Os {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private String name;
+    private String brand;
+    private String version;
     @OneToMany(mappedBy = "os", cascade = CascadeType.REMOVE)
     private Set<SystemRequirement> systemRequirements;
 }

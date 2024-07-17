@@ -1,5 +1,6 @@
 package com.yuzarsif.gameservice.service;
 
+import com.yuzarsif.gameservice.dto.request.CreatePublisherRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Publisher;
 import com.yuzarsif.gameservice.repository.PublisherRepository;
@@ -29,5 +30,14 @@ public class PublisherService {
                 .stream()
                 .map(this::findById)
                 .collect(Collectors.toSet());
+    }
+
+    public void create(CreatePublisherRequest request) {
+        Publisher publisher = Publisher
+                .builder()
+                .name(request.name())
+                .build();
+
+        publisherRepository.save(publisher);
     }
 }

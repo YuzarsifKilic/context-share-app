@@ -1,12 +1,10 @@
 package com.yuzarsif.gameservice.controller;
 
 import com.yuzarsif.gameservice.dto.ProcessorDto;
+import com.yuzarsif.gameservice.dto.request.CreateProcessorRequest;
 import com.yuzarsif.gameservice.service.ProcessorService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +16,12 @@ public class ProcessorController {
 
     public ProcessorController(ProcessorService processorService) {
         this.processorService = processorService;
+    }
+
+    @PostMapping
+    public ResponseEntity<String> create(@RequestBody CreateProcessorRequest request) {
+        processorService.create(request);
+        return ResponseEntity.ok("Processor created successfully");
     }
 
     @GetMapping("/search")

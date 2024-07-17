@@ -1,6 +1,7 @@
 package com.yuzarsif.gameservice.service;
 
 import com.yuzarsif.gameservice.dto.OsDto;
+import com.yuzarsif.gameservice.dto.request.CreateOsRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Os;
 import com.yuzarsif.gameservice.repository.OsRepository;
@@ -32,9 +33,19 @@ public class OsService {
 
     public List<OsDto> findByNameContaining(String name) {
         return osRepository
-                .findByNameContaining(name)
+                .findByBrandContainingOrVersionContaining(name, name)
                 .stream()
                 .map(OsDto::convert)
                 .toList();
+    }
+
+    public void create(CreateOsRequest request) {
+        Os os = Os
+                .builder()
+                .brand(request.brand())
+                .version(request.version())
+                .build();
+
+        osRepository.save(os);
     }
 }

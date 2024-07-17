@@ -1,12 +1,10 @@
 package com.yuzarsif.gameservice.controller;
 
 import com.yuzarsif.gameservice.dto.OsDto;
+import com.yuzarsif.gameservice.dto.request.CreateOsRequest;
 import com.yuzarsif.gameservice.service.OsService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +16,12 @@ public class OsController {
 
     public OsController(OsService osService) {
         this.osService = osService;
+    }
+
+    @PostMapping
+    public ResponseEntity<String> create(@RequestBody CreateOsRequest request) {
+        osService.create(request);
+        return ResponseEntity.ok("Os created successfully");
     }
 
     @GetMapping("/search")

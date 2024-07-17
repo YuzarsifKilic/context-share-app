@@ -1,6 +1,7 @@
 package com.yuzarsif.gameservice.service;
 
 import com.yuzarsif.gameservice.dto.ProcessorDto;
+import com.yuzarsif.gameservice.dto.request.CreateProcessorRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Processor;
 import com.yuzarsif.gameservice.repository.ProcessorRepository;
@@ -36,5 +37,15 @@ public class ProcessorService {
                 .stream()
                 .map(ProcessorDto::convert)
                 .toList();
+    }
+
+    public void create(CreateProcessorRequest request) {
+        Processor processor = Processor
+                .builder()
+                .brand(request.brand())
+                .version(request.version())
+                .build();
+
+        processorRepository.save(processor);
     }
 }

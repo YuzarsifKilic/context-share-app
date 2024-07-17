@@ -1,5 +1,6 @@
 package com.yuzarsif.gameservice.service;
 
+import com.yuzarsif.gameservice.dto.request.CreatePlatformRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Platform;
 import com.yuzarsif.gameservice.repository.PlatformRepository;
@@ -29,5 +30,14 @@ public class PlatformService {
                 .stream()
                 .map(this::findById)
                 .collect(Collectors.toSet());
+    }
+
+    public void create(CreatePlatformRequest request) {
+        Platform platform = Platform
+                .builder()
+                .name(request.name())
+                .build();
+
+        platformRepository.save(platform);
     }
 }

@@ -1,5 +1,6 @@
 package com.yuzarsif.gameservice.service;
 
+import com.yuzarsif.gameservice.dto.request.CreateGenreRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Genre;
 import com.yuzarsif.gameservice.repository.GenreRepository;
@@ -29,5 +30,14 @@ public class GenreService {
                 .stream()
                 .map(this::findById)
                 .collect(Collectors.toSet());
+    }
+
+    public void create(CreateGenreRequest request) {
+        Genre genre = Genre
+                .builder()
+                .name(request.name())
+                .build();
+
+        genreRepository.save(genre);
     }
 }

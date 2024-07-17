@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface OsRepository extends JpaRepository<Os, Long> {
 
-    List<Os> findByNameContaining(String name);
+    List<Os> findByBrandContainingOrVersionContaining(String brand, String version);
 }
