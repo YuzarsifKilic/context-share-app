@@ -1,8 +1,10 @@
 package com.yuzarsif.seriesservice.service;
 
 import com.yuzarsif.seriesservice.dto.DirectorDto;
+import com.yuzarsif.seriesservice.dto.request.CreateDirectorRequest;
 import com.yuzarsif.seriesservice.model.Director;
 import com.yuzarsif.seriesservice.repository.DirectorRepository;
+import com.yuzarsif.seriesservice.utils.DateConverter;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +37,18 @@ public class DirectorService {
                 .stream()
                 .map(DirectorDto::convert)
                 .toList();
+    }
+
+    public DirectorDto createDirector(CreateDirectorRequest request) {
+        Director director = Director.builder()
+                .name(request.name())
+                .bio(request.bio())
+                .imageUrl(request.imageUrl())
+                .birthDate(DateConverter.convert(request.birthDate()))
+                .build();
+
+        Director savedDirector = directorRepository.save(director);
+
+        return DirectorDto.convert(savedDirector);
     }
 }

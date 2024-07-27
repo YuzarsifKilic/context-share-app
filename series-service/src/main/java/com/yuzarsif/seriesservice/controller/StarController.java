@@ -1,6 +1,7 @@
 package com.yuzarsif.seriesservice.controller;
 
 import com.yuzarsif.seriesservice.dto.StarDto;
+import com.yuzarsif.seriesservice.dto.request.CreateStarRequest;
 import com.yuzarsif.seriesservice.service.StarService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,5 +29,10 @@ public class StarController {
     @GetMapping("/{id}")
     public ResponseEntity<StarDto> getStarById(@PathVariable Long id) {
         return ResponseEntity.ok(starService.getStarById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<StarDto> createStar(@RequestBody CreateStarRequest request) {
+        return ResponseEntity.ok(starService.createStar(request));
     }
 }

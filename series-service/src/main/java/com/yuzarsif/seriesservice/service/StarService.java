@@ -1,8 +1,10 @@
 package com.yuzarsif.seriesservice.service;
 
 import com.yuzarsif.seriesservice.dto.StarDto;
+import com.yuzarsif.seriesservice.dto.request.CreateStarRequest;
 import com.yuzarsif.seriesservice.model.Star;
 import com.yuzarsif.seriesservice.repository.StarRepository;
+import com.yuzarsif.seriesservice.utils.DateConverter;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +37,20 @@ public class StarService {
                 .stream()
                 .map(StarDto::convert)
                 .toList();
+    }
+
+    public StarDto createStar(CreateStarRequest request) {
+        Star star = Star.builder()
+                .name(request.name())
+                .bio(request.bio())
+                .birthDate(DateConverter.convert(request.birthDate()))
+                .height(request.height())
+                .bornPlace(request.bornPlace())
+                .imageUrl(request.imageUrl())
+                .build();
+
+        Star savedStar = starRepository.save(star);
+
+        return StarDto.convert(savedStar);
     }
 }

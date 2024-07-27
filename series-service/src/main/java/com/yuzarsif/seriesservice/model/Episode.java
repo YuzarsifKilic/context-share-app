@@ -18,7 +18,7 @@ public class Episode {
     private Long id;
     private Integer episodeNumber;
     private String name;
-    private String url;
+    private String imageUrl;
     private Date episodeDate;
     private Boolean mostPopular;
     private String storyLine;

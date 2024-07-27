@@ -1,6 +1,7 @@
 package com.yuzarsif.seriesservice.controller;
 
 import com.yuzarsif.seriesservice.dto.DirectorDto;
+import com.yuzarsif.seriesservice.dto.request.CreateDirectorRequest;
 import com.yuzarsif.seriesservice.service.DirectorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +30,10 @@ public class DirectorController {
     @GetMapping("/{id}")
     public ResponseEntity<DirectorDto> getDirectorById(@PathVariable Long id) {
         return ResponseEntity.ok(directorService.getDirectorById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<DirectorDto> createDirector(@RequestBody CreateDirectorRequest request) {
+        return ResponseEntity.ok(directorService.createDirector(request));
     }
 }

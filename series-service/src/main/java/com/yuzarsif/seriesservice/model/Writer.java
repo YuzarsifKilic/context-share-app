@@ -27,7 +27,7 @@ public class Writer {
     private String bio;
     private String bornPlace;
     private Float height;
-    private String url;
+    private String imageUrl;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "series_writer",
@@ -44,7 +44,7 @@ public class Writer {
                 ", bio='" + bio + '\'' +
                 ", bornPlace='" + bornPlace + '\'' +
                 ", height=" + height +
-                ", url='" + url + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 
@@ -53,11 +53,11 @@ public class Writer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Writer writer = (Writer) o;
-        return Objects.equals(id, writer.id) && Objects.equals(name, writer.name) && Objects.equals(birthDate, writer.birthDate) && Objects.equals(bio, writer.bio) && Objects.equals(bornPlace, writer.bornPlace) && Objects.equals(height, writer.height) && Objects.equals(url, writer.url);
+        return Objects.equals(id, writer.id) && Objects.equals(name, writer.name) && Objects.equals(birthDate, writer.birthDate) && Objects.equals(bio, writer.bio) && Objects.equals(bornPlace, writer.bornPlace) && Objects.equals(height, writer.height) && Objects.equals(imageUrl, writer.imageUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, birthDate, bio, bornPlace, height, url);
+        return Objects.hash(id, name, birthDate, bio, bornPlace, height, imageUrl);
     }
 }

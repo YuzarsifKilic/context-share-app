@@ -1,8 +1,10 @@
 package com.yuzarsif.seriesservice.service;
 
 import com.yuzarsif.seriesservice.dto.WriterDto;
+import com.yuzarsif.seriesservice.dto.request.CreateWriterRequest;
 import com.yuzarsif.seriesservice.model.Writer;
 import com.yuzarsif.seriesservice.repository.WriterRepository;
+import com.yuzarsif.seriesservice.utils.DateConverter;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +37,20 @@ public class WriterService {
                 .stream()
                 .map(WriterDto::convert)
                 .toList();
+    }
+
+    public WriterDto createWriter(CreateWriterRequest request) {
+        Writer writer = Writer.builder()
+                .name(request.name())
+                .birthDate(DateConverter.convert(request.birthDate()))
+                .bio(request.bio())
+                .imageUrl(request.imageUrl())
+                .height(request.height())
+                .bornPlace(request.bornPlace())
+                .build();
+
+        Writer savedWriter = writerRepository.save(writer);
+
+        return WriterDto.convert(savedWriter);
     }
 }
