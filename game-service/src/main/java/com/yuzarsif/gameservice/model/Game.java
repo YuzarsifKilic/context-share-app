@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -24,6 +25,7 @@ public class Game {
     private String name;
     private Date releaseDate;
     private String description;
+    private String mainImage;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "game_developer",
@@ -73,4 +75,28 @@ public class Game {
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.REMOVE)
     private Set<Store> stores;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Game game = (Game) o;
+        return Objects.equals(id, game.id) && Objects.equals(name, game.name) && Objects.equals(releaseDate, game.releaseDate) && Objects.equals(description, game.description) && Objects.equals(mainImage, game.mainImage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, releaseDate, description, mainImage);
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", releaseDate=" + releaseDate +
+                ", description='" + description + '\'' +
+                ", mainImage='" + mainImage + '\'' +
+                '}';
+    }
 }

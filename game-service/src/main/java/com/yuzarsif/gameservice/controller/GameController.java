@@ -26,9 +26,15 @@ public class GameController {
         return ResponseEntity.ok("Game created successfully");
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<GameDto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(gameService.getById(id));
+    }
+
     @GetMapping
-    public ResponseEntity<PageResponse<GameDto>> findAll(@RequestParam(defaultValue = "0", required = false) Integer page,
-                                                @RequestParam(defaultValue = "20", required = false) Integer size) {
+    public ResponseEntity<PageResponse<GameDto>> findAll(
+            @RequestParam(defaultValue = "0", required = false) Integer page,
+            @RequestParam(defaultValue = "20", required = false) Integer size) {
         return ResponseEntity.ok(gameService.findAll(page, size));
     }
 

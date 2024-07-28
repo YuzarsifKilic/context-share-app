@@ -1,0 +1,112 @@
+<div class="container mt-4 bg-white p-5 rounded-2 shadow-lg">
+  <div class="d-flex gap-4">
+    <div>
+      <img [src]="game.mainImage" [width]="500" [height]="300">
+    </div>
+    <div>
+      <div class="fs-3 header-font">{{game.name}}</div>
+      <div class="mt-2">{{game.description}}</div>
+      <div class="mt-2 d-flex gap-2">
+        <div class="text-secondary">
+          Release Date:
+        </div>
+        <div>
+          {{game.releaseDate.replace("00:00:00.0", "")}}
+        </div>
+      </div>
+      <div class="mt-2 d-flex gap-2">
+        <div class="text-secondary">Developers:</div>
+        <div *ngFor="let developer of game.developers" class="developers">{{developer.name}}</div>
+      </div>
+      <div class="mt-2 d-flex gap-2">
+        <div class="text-secondary">Platforms:</div>
+        <div *ngFor="let platform of game.platforms" class="developers">{{platform.name}}</div>
+      </div>
+      <div class="mt-2 d-flex gap-2">
+        <div *ngFor="let genre of game.genres">
+          <button class="btn btn-primary">{{genre.name}}</button>
+        </div>
+      </div>
+      <div class="mt-2 d-flex gap-2">
+        <div *ngFor="let feature of game.features">
+          <button class="btn btn-primary">{{feature.name}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <table class="table">
+      <thead>
+        <tr>
+          <th *ngFor="let column of displayedColumns" class="text-secondary font-monospace">{{column}}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let store of game.stores" class="text-secondary font-monospace">
+          <th>{{store.storeName}}</th>
+          <th>{{store.platform.name}}</th>
+          <th>{{store.price}}</th>
+          <ng-container *ngIf="store.discount !== null; else noDiscount">
+            <th>{{ store.discount}}</th>
+            <th>{{ store.discountStartDate.replace(" 00:00:00.0", "")}} - {{store.discountStartTime}}</th>
+            <th>{{ store.discountEndDate.replace(" 00:00:00.0", "")}} - {{store.discountEndTime}}</th>
+          </ng-container>
+          <ng-template #noDiscount>
+            <th>-</th>
+            <th>-</th>
+            <th>-</th>
+          </ng-template>
+          <th>{{ store.finalPrice}}</th>
+          <th><button (click)="showStore(store.url)" class="btn btn-primary btn-sm">Visit the Store</button></th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-4">
+    <div class="text-secondary col-2 border-bottom">
+      Audio Languages
+    </div>
+    <div class="d-flex gap-2 mt-2">
+      <div>{{getLanguages(game.audioLanguages)}}</div>
+    </div>
+  </div>
+  <div class="mt-4">
+    <div class="text-secondary col-2 border-bottom">
+      Subtitle Languages
+    </div>
+    <div class="d-flex gap-2 mt-2">
+      <div>{{getLanguages(game.subtitleLanguages)}}</div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="text-secondary border-bottom col-3">Minimum System Requirements</div>
+    <div class="d-flex mt-4">
+      <div class="col-2 text-secondary">Operating System</div>
+      <div>{{game.minSystemRequirement.os.brand}} {{game.minSystemRequirement.os.version}}</div>
+    </div>
+    <div class="d-flex">
+      <div class="col-2 text-secondary">Processor</div>
+      <div>{{game.minSystemRequirement.processor.brand}} {{game.minSystemRequirement.processor.version}}</div>
+    </div>
+    <div class="d-flex">
+      <div class="col-2 text-secondary">Graphics Cards</div>
+      <div>{{ getGraphicsCards() }}</div>
+    </div>
+    <div class="d-flex">
+      <div class="col-2 text-secondary">Memory</div>
+      <div>{{game.minSystemRequirement.memory}} GB</div>
+    </div>
+    <div class="d-flex">
+      <div class="col-2 text-secondary">Storage</div>
+      <div>{{game.minSystemRequirement.storage}} GB</div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">
+  <app-comments [id]="1" [type]="game"></app-comments>
+</div>

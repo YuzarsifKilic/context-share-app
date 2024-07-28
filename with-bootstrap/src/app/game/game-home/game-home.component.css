@@ -1,3 +1,7 @@
 .big-screen {
   height: 100vh;
 }
+
+.example-card:hover{
+  background-color: #f5f5f5;
+}

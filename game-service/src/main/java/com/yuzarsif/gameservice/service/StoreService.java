@@ -4,6 +4,7 @@ import com.yuzarsif.gameservice.dto.request.CreateDiscountRequest;
 import com.yuzarsif.gameservice.dto.request.CreateStoreRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Game;
+import com.yuzarsif.gameservice.model.Platform;
 import com.yuzarsif.gameservice.model.Store;
 import com.yuzarsif.gameservice.repository.StoreRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
@@ -15,20 +16,25 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final GameService gameService;
+    private final PlatformService platformService;
 
-    public StoreService(StoreRepository storeRepository, GameService gameService) {
+    public StoreService(StoreRepository storeRepository, GameService gameService, PlatformService platformService) {
         this.storeRepository = storeRepository;
         this.gameService = gameService;
+        this.platformService = platformService;
     }
 
     public void createStore(CreateStoreRequest createStoreRequest) {
         Game game = gameService.findById(createStoreRequest.gameId());
+        Platform platform = platformService.findById(createStoreRequest.platformId());
 
         Store store = Store
                 .builder()
                 .storeName(createStoreRequest.storeName())
                 .price(createStoreRequest.price())
                 .game(game)
+                .platform(platform)
+                .url(createStoreRequest.url())
                 .build();
 
         storeRepository.save(store);

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -39,4 +40,26 @@ public class SystemRequirement {
 
     @OneToMany(mappedBy = "minSystemRequirement")
     private Set<Game> games;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SystemRequirement that = (SystemRequirement) o;
+        return Objects.equals(id, that.id) && Objects.equals(memory, that.memory) && Objects.equals(storage, that.storage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, memory, storage);
+    }
+
+    @Override
+    public String toString() {
+        return "SystemRequirement{" +
+                "id=" + id +
+                ", memory=" + memory +
+                ", storage=" + storage +
+                '}';
+    }
 }

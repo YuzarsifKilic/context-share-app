@@ -1,35 +1,35 @@
-import {AfterViewInit, Component} from '@angular/core';
-import {MovieService} from "../../_services/movie.service";
-import {Movie} from "../../_models/movie";
+import {Component} from '@angular/core';
 import {NgForOf} from "@angular/common";
-declare var bootstrap: any;
+import {GameService} from "../../_services/game.service";
+import {MatCard, MatCardContent, MatCardHeader, MatCardModule} from "@angular/material/card";
+import {MatButtonModule} from "@angular/material/button";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-game-home',
   standalone: true,
   imports: [
+    MatCardModule,
+    MatButtonModule,
     NgForOf
   ],
   templateUrl: './game-home.component.html',
   styleUrl: './game-home.component.css'
 })
-export class GameHomeComponent implements AfterViewInit {
+export class GameHomeComponent {
 
-  movies: Movie[] = [];
+  games: any[] = [];
 
-  constructor(private movieService: MovieService) {
-    this.movieService.getMovies()
-      .subscribe({
-        next: (res: any) => {
-          this.movies = res;
-        }
-      })
+  constructor(private gameService: GameService, private router: Router) { }
+
+  ngOnInit() {
+    this.gameService.getGames(undefined, undefined).subscribe(resp => {
+      this.games = resp.content;
+    })
   }
 
-  ngAfterViewInit(): void {
-    const toastElement = document.querySelector('.toast');
-    const toast = new bootstrap.Toast(toastElement);
-    toast.show();
-  }
 
+  gameDetail(id: number) {
+    this.router.navigate(["/game-details/", id]);
+  }
 }

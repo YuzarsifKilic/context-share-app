@@ -5,6 +5,8 @@ import com.yuzarsif.gameservice.model.StoreType;
 public record CreateStoreRequest(
         StoreType storeName,
         Float price,
-        Long gameId
+        String url,
+        Long gameId,
+        Long platformId
 ) {
 }

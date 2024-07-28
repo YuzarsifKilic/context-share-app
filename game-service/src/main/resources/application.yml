@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: GAME-SERVICE
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/game-db
+    username: root
+    password: yuzarsif
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    properties:
+      dialect: org.hibernate.dialect.MySQLDialect
+

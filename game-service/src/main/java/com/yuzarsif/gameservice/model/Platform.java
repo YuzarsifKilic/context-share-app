@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -26,4 +27,28 @@ public class Platform {
             joinColumns = @JoinColumn(name = "platform_id"),
             inverseJoinColumns = @JoinColumn(name = "game_id"))
     private Set<Game> games;
+
+    @OneToMany(mappedBy = "platform")
+    private Set<Store> stores;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Platform platform = (Platform) o;
+        return Objects.equals(id, platform.id) && Objects.equals(name, platform.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return "Platform{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

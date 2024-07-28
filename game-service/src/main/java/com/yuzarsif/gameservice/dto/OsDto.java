@@ -7,11 +7,12 @@ import java.util.Set;
 
 public record OsDto(
         Long id,
-        String name
+        String brand,
+        String version
 ) {
 
     public static OsDto convert(Os from) {
-        return new OsDto(from.getId(), from.getName());
+        return new OsDto(from.getId(), from.getBrand(), from.getVersion());
     }
 
     public static List<OsDto> convertList(Set<Os> from) {

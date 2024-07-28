@@ -1,0 +1,51 @@
+services:
+  game-db:
+    container_name: game-db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: yuzarsif
+      MYSQL_DATABASE: game-db
+    volumes:
+      - game-db-data:/var/lib/mysql
+    ports:
+      - 3307:3306
+    networks:
+      - microservice-network
+
+  movie-db:
+    container_name: movie-db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: yuzarsif
+      MYSQL_DATABASE: movie-db
+    volumes:
+      - movie-db-data:/var/lib/mysql
+    ports:
+      - 3308:3306
+    networks:
+      - microservice-network
+
+  series-db:
+    container_name: series-db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: yuzarsif
+      MYSQL_DATABASE: series-db
+    volumes:
+      - series-db-data:/var/lib/mysql
+    ports:
+      - 3310:3306
+    networks:
+      - microservice-network
+
+networks:
+  microservice-network:
+    driver: bridge
+
+volumes:
+  game-db-data:
+  movie-db-data:
+  series-db-data:

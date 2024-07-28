@@ -10,8 +10,10 @@ public record StoreDto(
         Long id,
         StoreType storeName,
         Float price,
+        PlatformDto platform,
         Float discount,
         Float finalPrice,
+        String url,
         String discountStartDate,
         String discountEndDate,
         String discountStartTime,
@@ -19,12 +21,28 @@ public record StoreDto(
 ) {
 
     public static StoreDto convert(Store from) {
+        if (from.getDiscountEndDate() == null && from.getDiscountStartDate() == null && from.getDiscountEndTime() == null && from.getDiscountStartTime() == null) {
+            return new StoreDto(
+                    from.getId(),
+                    from.getStoreName(),
+                    from.getPrice(),
+                    PlatformDto.convert( from.getPlatform()),
+                    from.getDiscount(),
+                    from.getFinalPrice(),
+                    from.getUrl(),
+                    null,
+                    null,
+                    null,
+                    null);
+        }
         return new StoreDto(
                 from.getId(),
                 from.getStoreName(),
                 from.getPrice(),
+                PlatformDto.convert( from.getPlatform()),
                 from.getDiscount(),
                 from.getFinalPrice(),
+                from.getUrl(),
                 from.getDiscountStartDate().toString(),
                 from.getDiscountEndDate().toString(),
                 from.getDiscountStartTime().toString(),

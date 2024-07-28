@@ -62,6 +62,7 @@ public class GameService {
                 .name(createGameRequest.name())
                 .releaseDate(DateConverter.convert(createGameRequest.releaseDate()))
                 .description(createGameRequest.description())
+                .mainImage(createGameRequest.mainImage())
                 .developers(developers)
                 .audioLanguages(audioLanguages)
                 .subtitleLanguages(subtitleLanguages)
@@ -138,5 +139,9 @@ public class GameService {
     protected Game findById(Long id) {
         return gameRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Game not found with id " + id));
+    }
+
+    public GameDto getById(Long id) {
+        return GameDto.convert(findById(id));
     }
 }
