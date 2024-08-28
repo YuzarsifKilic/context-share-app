@@ -7,6 +7,7 @@ import com.yuzarsif.gameservice.repository.GenreRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,11 @@ public class GenreService {
                 .orElseThrow(() -> new EntityNotFoundException("Genre not found with id " + id));
     }
 
+    public Optional<Genre> findByName(String name) {
+        return genreRepository
+                .findByName(name);
+    }
+
     public Set<Genre> findByIdList(List<Long> idList) {
         return idList
                 .stream()
@@ -32,12 +38,12 @@ public class GenreService {
                 .collect(Collectors.toSet());
     }
 
-    public void create(CreateGenreRequest request) {
+    public Genre create(CreateGenreRequest request) {
         Genre genre = Genre
                 .builder()
                 .name(request.name())
                 .build();
 
-        genreRepository.save(genre);
+        return genreRepository.save(genre);
     }
 }

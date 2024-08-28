@@ -25,9 +25,11 @@ public class SystemRequirement {
     @JoinColumn(name = "os_id")
     private Os os;
 
-    @ManyToOne
-    @JoinColumn(name = "processor_id")
-    private Processor processor;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "system_requirement_processors",
+            joinColumns = @JoinColumn(name = "system_requirement_id"),
+            inverseJoinColumns = @JoinColumn(name = "processor_id"))
+    private Set<Processor> processors;
 
     private Integer memory;
     private Integer storage;

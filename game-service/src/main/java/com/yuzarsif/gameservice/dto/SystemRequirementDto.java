@@ -7,7 +7,7 @@ import java.util.List;
 public record SystemRequirementDto(
     Long id,
     OsDto os,
-    ProcessorDto processor,
+    List<ProcessorDto> processor,
     Integer memory,
     Integer storage,
     List<GraphicsDto> graphics
@@ -17,7 +17,7 @@ public record SystemRequirementDto(
         return new SystemRequirementDto(
                 from.getId(),
                 OsDto.convert(from.getOs()),
-                ProcessorDto.convert(from.getProcessor()),
+                ProcessorDto.convertList(from.getProcessors()),
                 from.getMemory(),
                 from.getStorage(),
                 GraphicsDto.convertList(from.getGraphics())

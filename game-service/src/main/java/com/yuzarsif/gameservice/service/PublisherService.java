@@ -7,6 +7,7 @@ import com.yuzarsif.gameservice.repository.PublisherRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,12 +33,17 @@ public class PublisherService {
                 .collect(Collectors.toSet());
     }
 
-    public void create(CreatePublisherRequest request) {
+    public Optional<Publisher> findByName(String name) {
+        return publisherRepository
+                .findByName(name);
+    }
+
+    public Publisher create(CreatePublisherRequest request) {
         Publisher publisher = Publisher
                 .builder()
                 .name(request.name())
                 .build();
 
-        publisherRepository.save(publisher);
+        return publisherRepository.save(publisher);
     }
 }

@@ -7,6 +7,7 @@ import com.yuzarsif.gameservice.repository.FeatureRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,11 @@ public class FeatureService {
                 .orElseThrow(() -> new EntityNotFoundException("Feature not found with id " + id));
     }
 
+    public Optional<Feature> findByName(String name) {
+        return featureRepository
+                .findByName(name);
+    }
+
     public Set<Feature> findByIdList(List<Long> idList) {
         return idList
                 .stream()
@@ -32,12 +38,12 @@ public class FeatureService {
                 .collect(Collectors.toSet());
     }
 
-    public void create(CreateFeatureRequest request) {
+    public Feature create(CreateFeatureRequest request) {
         Feature feature = Feature
                 .builder()
                 .name(request.name())
                 .build();
 
-        featureRepository.save(feature);
+        return featureRepository.save(feature);
     }
 }

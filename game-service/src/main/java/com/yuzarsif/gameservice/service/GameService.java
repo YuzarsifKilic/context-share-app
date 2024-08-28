@@ -1,23 +1,26 @@
 package com.yuzarsif.gameservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.yuzarsif.gameservice.client.SteamClient;
+import com.yuzarsif.gameservice.client.response.AppDetailsResponse;
+import com.yuzarsif.gameservice.client.response.AppListResponse;
 import com.yuzarsif.gameservice.dto.GameDto;
 import com.yuzarsif.gameservice.dto.PageResponse;
-import com.yuzarsif.gameservice.dto.request.CreateGameRequest;
-import com.yuzarsif.gameservice.dto.request.SearchByGenreRequest;
+import com.yuzarsif.gameservice.dto.request.*;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.*;
 import com.yuzarsif.gameservice.repository.GameRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
+@Slf4j
 public class GameService {
 
     private final GameRepository gameRepository;
@@ -28,6 +31,7 @@ public class GameService {
     private final PlatformService platformService;
     private final PublisherService publisherService;
     private final SystemRequirementService systemRequirementService;
+    private final SteamClient steamClient;
 
     public GameService(GameRepository gameRepository,
                        DeveloperService developerService,
@@ -36,7 +40,8 @@ public class GameService {
                        LanguageService languageService,
                        PlatformService platformService,
                        PublisherService publisherService,
-                       SystemRequirementService systemRequirementService) {
+                       SystemRequirementService systemRequirementService,
+                       SteamClient steamClient) {
         this.gameRepository = gameRepository;
         this.developerService = developerService;
         this.featureService = featureService;
@@ -45,6 +50,7 @@ public class GameService {
         this.platformService = platformService;
         this.publisherService = publisherService;
         this.systemRequirementService = systemRequirementService;
+        this.steamClient = steamClient;
     }
 
     public void create(CreateGameRequest createGameRequest) {
@@ -80,12 +86,15 @@ public class GameService {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Game> games = gameRepository.findAll(pageable);
-
+        long startTime = System.currentTimeMillis();
         List<GameDto> gameResponse = gameRepository.findAll(pageable)
                 .stream()
                 .map(GameDto::convert)
                 .toList();
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
 
+        System.out.println("Execution time: " + duration + " milliseconds");
         return new PageResponse<>(
                 gameResponse,
                 games.getNumber(),
@@ -144,4 +153,5 @@ public class GameService {
     public GameDto getById(Long id) {
         return GameDto.convert(findById(id));
     }
+
 }

@@ -3,15 +3,18 @@ package com.yuzarsif.gameservice.service;
 import com.yuzarsif.gameservice.dto.request.CreateDiscountRequest;
 import com.yuzarsif.gameservice.dto.request.CreateStoreRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
+import com.yuzarsif.gameservice.model.Currency;
 import com.yuzarsif.gameservice.model.Game;
 import com.yuzarsif.gameservice.model.Platform;
 import com.yuzarsif.gameservice.model.Store;
 import com.yuzarsif.gameservice.repository.StoreRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import com.yuzarsif.gameservice.utils.TimeConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class StoreService {
 
     private final StoreRepository storeRepository;
@@ -35,9 +38,11 @@ public class StoreService {
                 .game(game)
                 .platform(platform)
                 .url(createStoreRequest.url())
+                .currency(Currency.valueOf(createStoreRequest.currency().toUpperCase()))
                 .build();
 
-        storeRepository.save(store);
+        Store savedStore = storeRepository.save(store);
+        log.info("Created store: " + savedStore);
     }
 
     public void createDiscount(Long storeId, CreateDiscountRequest createDiscountRequest) {

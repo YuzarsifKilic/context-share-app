@@ -23,7 +23,11 @@ public class Processor {
     private Long id;
     private String brand;
     private String version;
-    @OneToMany(mappedBy = "processor", cascade = CascadeType.REMOVE)
+    private String description;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "system_requirement_processors",
+            joinColumns = @JoinColumn(name = "processor_id"),
+            inverseJoinColumns = @JoinColumn(name = "system_requirement_id"))
     private Set<SystemRequirement> systemRequirements;
 
     @Override
@@ -31,12 +35,12 @@ public class Processor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Processor processor = (Processor) o;
-        return Objects.equals(id, processor.id) && Objects.equals(brand, processor.brand) && Objects.equals(version, processor.version);
+        return Objects.equals(id, processor.id) && Objects.equals(brand, processor.brand) && Objects.equals(version, processor.version) && Objects.equals(description, processor.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, brand, version);
+        return Objects.hash(id, brand, version, description);
     }
 
     @Override
@@ -45,6 +49,7 @@ public class Processor {
                 "id=" + id +
                 ", brand='" + brand + '\'' +
                 ", version='" + version + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

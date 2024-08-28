@@ -7,6 +7,7 @@ import com.yuzarsif.gameservice.repository.PlatformRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,12 +33,18 @@ public class PlatformService {
                 .collect(Collectors.toSet());
     }
 
-    public void create(CreatePlatformRequest request) {
+
+    public Optional<Platform> findByName(String name) {
+        return platformRepository
+                .findByName(name);
+    }
+
+    public Platform create(CreatePlatformRequest request) {
         Platform platform = Platform
                 .builder()
                 .name(request.name())
                 .build();
 
-        platformRepository.save(platform);
+        return platformRepository.save(platform);
     }
 }

@@ -24,6 +24,7 @@ public class Game {
     private Long id;
     private String name;
     private Date releaseDate;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String mainImage;
 

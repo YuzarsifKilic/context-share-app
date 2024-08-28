@@ -1,13 +1,27 @@
 package com.yuzarsif.gameservice;
 
+import com.yuzarsif.gameservice.client.SteamClient;
+import com.yuzarsif.gameservice.client.response.AppDetailsResponse;
+import com.yuzarsif.gameservice.client.response.AppListResponse;
+import com.yuzarsif.gameservice.exception.DateFormatterException;
 import com.yuzarsif.gameservice.model.Language;
+import com.yuzarsif.gameservice.model.Platform;
+import com.yuzarsif.gameservice.model.SystemRequirement;
 import com.yuzarsif.gameservice.repository.LanguageRepository;
+import com.yuzarsif.gameservice.repository.PlatformRepository;
+import com.yuzarsif.gameservice.service.GameSaveService;
+import com.yuzarsif.gameservice.service.GameService;
+import com.yuzarsif.gameservice.service.SystemRequirementService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootApplication
 public class GameServiceApplication {
@@ -17,26 +31,21 @@ public class GameServiceApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(LanguageRepository languageRepository) {
+    public CommandLineRunner commandLineRunner(GameService gameService,
+                                               SteamClient steamClient,
+                                               SystemRequirementService systemRequirementService,
+                                               GameSaveService gameSaveService,
+                                               PlatformRepository platformRepository) {
         return args -> {
-            Language language1 = Language
-                    .builder()
-                    .name("English")
-                    .build();
-            Language language2 = Language
-                    .builder()
-                    .name("Turkish")
-                    .build();
-            Language language3 = Language
-                    .builder()
-                    .name("French")
-                    .build();
-            Language language4 = Language
-                    .builder()
-                    .name("Dutch")
-                    .build();
-
-            languageRepository.saveAll(List.of(language1, language2, language3, language4));
+            Optional<Platform> steam = platformRepository.findByName("STEAM");
+            if (steam.isEmpty()) {
+                Platform platform = Platform
+                        .builder()
+                        .name("STEAM")
+                        .build();
+                platformRepository.save(platform);
+            }
+            //gameSaveService.saveGamesBySteamClient();
         };
     }
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface GameRepository extends JpaRepository<Game, Long> {
@@ -14,4 +15,6 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     Page<Game> findByNameContaining(String name, Pageable pageable);
 
     Page<Game> findByGenres(Set<Genre> genres, Pageable pageable);
+
+    Optional<Game> findByName(String name);
 }

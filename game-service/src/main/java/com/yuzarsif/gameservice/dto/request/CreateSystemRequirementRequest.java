@@ -4,9 +4,9 @@ import java.util.List;
 
 public record CreateSystemRequirementRequest(
         Long osId,
-        Long processorId,
         Integer memory,
         Integer storage,
+        List<Long> processorIdList,
         List<Long> graphicsIdList
 ) {
 }

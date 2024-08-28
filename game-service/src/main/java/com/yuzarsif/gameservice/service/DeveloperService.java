@@ -1,5 +1,6 @@
 package com.yuzarsif.gameservice.service;
 
+import com.yuzarsif.gameservice.dto.DeveloperDto;
 import com.yuzarsif.gameservice.dto.request.CreateDeveloperRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Developer;
@@ -7,6 +8,7 @@ import com.yuzarsif.gameservice.repository.DeveloperRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,14 +21,20 @@ public class DeveloperService {
         this.developerRepository = developerRepository;
     }
 
-    public void create(CreateDeveloperRequest request) {
+    public Developer create(CreateDeveloperRequest request) {
         Developer developer = Developer
                 .builder()
                 .name(request.name())
                 .build();
 
-        developerRepository.save(developer);
+        return developerRepository.save(developer);
     }
+
+    public Optional<Developer> findByName(String name) {
+        return developerRepository
+                .findByName(name);
+    }
+
 
     public Developer findById(Long id) {
         return developerRepository

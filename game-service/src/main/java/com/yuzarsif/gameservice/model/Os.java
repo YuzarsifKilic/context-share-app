@@ -23,6 +23,7 @@ public class Os {
     private Long id;
     private String brand;
     private String version;
+    private String description;
     @OneToMany(mappedBy = "os", cascade = CascadeType.REMOVE)
     private Set<SystemRequirement> systemRequirements;
 
@@ -31,12 +32,12 @@ public class Os {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Os os = (Os) o;
-        return Objects.equals(id, os.id) && Objects.equals(brand, os.brand) && Objects.equals(version, os.version);
+        return Objects.equals(id, os.id) && Objects.equals(brand, os.brand) && Objects.equals(version, os.version) && Objects.equals(description, os.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, brand, version);
+        return Objects.hash(id, brand, version, description);
     }
 
     @Override
@@ -45,6 +46,7 @@ public class Os {
                 "id=" + id +
                 ", brand='" + brand + '\'' +
                 ", version='" + version + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }
