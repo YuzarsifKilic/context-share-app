@@ -1,6 +1,7 @@
 package com.yuzarsif.gameservice.controller;
 
 import com.yuzarsif.gameservice.dto.GameDto;
+import com.yuzarsif.gameservice.dto.GameListDto;
 import com.yuzarsif.gameservice.dto.PageResponse;
 import com.yuzarsif.gameservice.dto.request.CreateGameRequest;
 import com.yuzarsif.gameservice.dto.request.SearchByGenreRequest;
@@ -32,7 +33,7 @@ public class GameController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<GameDto>> findAll(
+    public ResponseEntity<PageResponse<GameListDto>> findAll(
             @RequestParam(defaultValue = "0", required = false) Integer page,
             @RequestParam(defaultValue = "20", required = false) Integer size) {
         return ResponseEntity.ok(gameService.findAll(page, size));

@@ -5,6 +5,7 @@ import com.yuzarsif.gameservice.client.SteamClient;
 import com.yuzarsif.gameservice.client.response.AppDetailsResponse;
 import com.yuzarsif.gameservice.client.response.AppListResponse;
 import com.yuzarsif.gameservice.dto.GameDto;
+import com.yuzarsif.gameservice.dto.GameListDto;
 import com.yuzarsif.gameservice.dto.PageResponse;
 import com.yuzarsif.gameservice.dto.request.*;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
@@ -82,14 +83,14 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    public PageResponse<GameDto> findAll(Integer page, Integer size) {
+    public PageResponse<GameListDto> findAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<Game> games = gameRepository.findAll(pageable);
         long startTime = System.currentTimeMillis();
-        List<GameDto> gameResponse = gameRepository.findAll(pageable)
+        List<GameListDto> gameResponse = gameRepository.findAll(pageable)
                 .stream()
-                .map(GameDto::convert)
+                .map(GameListDto::convert)
                 .toList();
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
