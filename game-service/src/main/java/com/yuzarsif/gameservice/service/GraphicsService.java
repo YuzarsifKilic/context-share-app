@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -109,7 +110,7 @@ public class GraphicsService {
             if (firstGraphics.startsWith(" ")) {
                 firstGraphics = firstGraphics.replaceFirst(" ", "");
             }
-            if (firstGraphics.startsWith("NVDIA") || firstGraphics.startsWith("AMD") || firstGraphics.startsWith("OPENGL") || firstGraphics.startsWith("Intel") || firstGraphics.startsWith("NVidia") || firstGraphics.startsWith("Radeon") || firstGraphics.startsWith("Radeon(R)") || firstGraphics.startsWith("Nvidia") || firstGraphics.startsWith("NVIDIA®") || firstGraphics.startsWith("NVIDIA(R)") || firstGraphics.startsWith("AMD(R)") || firstGraphics.startsWith("Intel(R)") || firstGraphics.startsWith("NVIDA")) {
+            if (checkIsGraphicsBrandValid(firstGraphics)) {
                 if (firstGraphics.contains(" ")) {
                     String firstGraphicsBrand = firstGraphics.substring(0, firstGraphics.indexOf(" "));
                     String firstGraphicsVersion = firstGraphics.substring(firstGraphics.indexOf(" ") + 1);
@@ -129,7 +130,7 @@ public class GraphicsService {
             if (secondGraphics.startsWith(" ")) {
                 secondGraphics = secondGraphics.replaceFirst(" ", "");
             }
-            if (secondGraphics.startsWith("NVDIA") || secondGraphics.startsWith("AMD") || secondGraphics.startsWith("OPENGL")) {
+            if (checkIsGraphicsBrandValid(secondGraphics)) {
                 if (secondGraphics.contains(" ")) {
                     String secondGraphicsBrand = secondGraphics.substring(0, secondGraphics.indexOf(" "));
                     String secondGraphicsVersion = secondGraphics.substring(secondGraphics.indexOf(" ") + 1);
@@ -142,6 +143,11 @@ public class GraphicsService {
             }
         }
         return graphicsList;
+    }
+
+    private Boolean checkIsGraphicsBrandValid(String graphics) {
+        List<String> validBrands = Arrays.asList("NVDIA", "AMD", "OPENGL", "Intel", "NVidia", "Radeon", "Radeon(R)", "Nvidia", "NVIDIA®", "NVIDIA(R)", "AMD(R)", "Intel(R)", "NVIDA");
+        return validBrands.contains(graphics);
     }
 
     

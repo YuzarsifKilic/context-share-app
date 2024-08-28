@@ -96,7 +96,7 @@ public class ProcessorService {
                 return processorList;
             }
             log.info("Processor: " + processor);
-            if (processor.startsWith("Intel") || processor.startsWith("AMD") || processor.startsWith("Intel(R)") || processor.startsWith("AMD(R)") || processor.startsWith("Radeon") || processor.startsWith("Radeon(R)") || processor.startsWith("NVIDIA") || processor.startsWith("NVIDIA(R)")) {
+            if (this.checkProcessorBrandValid(processor)) {
                 String brand = processor.substring(0, processor.indexOf(" "));
                 String version = processor.substring(processor.indexOf(" ")+1);
                 processorList.add(this.ifProcessorExistsGetProcessorOrCreate(new CreateProcessorRequest(brand, version, null)));
@@ -105,6 +105,11 @@ public class ProcessorService {
             }
             return processorList;
         }
+    }
+
+    private Boolean checkProcessorBrandValid(String processor) {
+        List<String> brands = Arrays.asList("Intel", "AMD", "Intel(R)", "AMD(R)", "Radeon", "Radeon(R)", "NVIDIA", "NVIDIA(R)", "Intel®", "INTEL®");
+        return brands.contains(processor);
     }
 
     private List<Processor> extractProcessors(String[] processors) {
@@ -116,7 +121,7 @@ public class ProcessorService {
         if (!firstProcessor.contains(" ")) {
             processorList.add(this.ifProcessorExistsGetProcessorOrCreate(new CreateProcessorRequest(null, null, firstProcessor)));
         } else {
-            if (firstProcessor.startsWith("Intel") || firstProcessor.startsWith("AMD") || firstProcessor.startsWith("Intel(R)") || firstProcessor.startsWith("AMD(R)") || firstProcessor.startsWith("Radeon") || firstProcessor.startsWith("Radeon(R)") || firstProcessor.startsWith("NVIDIA") || firstProcessor.startsWith("NVIDIA(R)")) {
+            if (this.checkProcessorBrandValid(firstProcessor)) {
                 if (firstProcessor.contains(" ")) {
                     String firstProcessorBrand = firstProcessor.substring(0, firstProcessor.indexOf(" "));
                     String firstProcessorVersion = firstProcessor.substring(firstProcessor.indexOf(" ")+1);
@@ -135,7 +140,7 @@ public class ProcessorService {
             if (secondProcessor.startsWith(" ")) {
                 secondProcessor = secondProcessor.replaceFirst(" ", "");
             }
-            if (secondProcessor.startsWith("Intel") || secondProcessor.startsWith("AMD") || secondProcessor.startsWith("Intel(R)") || secondProcessor.startsWith("AMD(R)") || secondProcessor.startsWith("Radeon") || secondProcessor.startsWith("Radeon(R)") || secondProcessor.startsWith("NVIDIA") || secondProcessor.startsWith("NVIDIA(R)")) {
+            if (this.checkProcessorBrandValid(secondProcessor)) {
                 if (secondProcessor.contains(" ")) {
                     String secondProcessorBrand = secondProcessor.substring(0, secondProcessor.indexOf(" "));
                     String secondProcessorVersion = secondProcessor.substring(secondProcessor.indexOf(" ")+1);
