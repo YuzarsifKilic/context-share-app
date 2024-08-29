@@ -1,0 +1,30 @@
+name: Game Service API Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - game-service
+    paths:
+      - game-service/**
+      - .github/workflows/game-service.yml
+
+jobs:
+  build-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: 21
+      - name: Grant execute permission for gradlew
+        run: chmod +x game-service/gradlew
+      - name: Compile Project
+        run: |
+          cd game-service
+          ./mvnw clean compile

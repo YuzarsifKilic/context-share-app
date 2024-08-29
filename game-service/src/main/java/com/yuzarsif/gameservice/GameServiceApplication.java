@@ -45,7 +45,7 @@ public class GameServiceApplication {
                         .build();
                 platformRepository.save(platform);
             }
-            gameSaveService.saveGamesBySteamClient();
+            //gameSaveService.saveGamesBySteamClient();
         };
     }
 

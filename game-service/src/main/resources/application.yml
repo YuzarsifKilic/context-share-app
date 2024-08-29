@@ -14,7 +14,7 @@ spring:
       dialect: org.hibernate.dialect.MySQLDialect
   data:
     mongodb:
-      uri: mongodb+srv://yuzarsifkilic:GIefx3ujKjH4WaNa@cluster0.8yl9pa2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      uri: mongodb+srv://yuzarsifkilic:PyBJnq8AO88FeAQ0@cluster0.8yl9pa2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       database: context_share
 
 
