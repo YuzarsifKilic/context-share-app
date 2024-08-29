@@ -47,7 +47,7 @@ jobs:
           java-version: '21'
 
       - name: Grant execute permission for mvnw file
-        run: chmod +x api/mvnw
+        run: chmod +x game-service/mvnw
 
       - name: Extract Project Version
         id: extract_version
