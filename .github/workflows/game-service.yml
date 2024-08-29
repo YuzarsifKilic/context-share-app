@@ -97,8 +97,8 @@ jobs:
 
         - name: Deploy to Google Cloud Run
           run: |
-            gcloud run deploy my-spring-boot-app \
-            --image=${{ secrets.DOCKER_USERNAME }}/api:latest \
+            gcloud run deploy game-service \
+            --image=${{ secrets.DOCKER_USERNAME }}/game-service:latest \
             --platform=managed \
             --region=europe-west3 \
             --allow-unauthenticated \
