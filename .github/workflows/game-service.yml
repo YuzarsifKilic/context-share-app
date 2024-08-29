@@ -66,12 +66,12 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: api
+          context: game-service
           file: game-service/Dockerfile
           push: true
           tags: |
-            ${{secrets.DOCKER_USERNAME}}/api:${{ steps.extract_version.outputs.VERSION }}
-            ${{secrets.DOCKER_USERNAME}}/api:latest
+            ${{secrets.DOCKER_USERNAME}}/game-service:${{ steps.extract_version.outputs.VERSION }}
+            ${{secrets.DOCKER_USERNAME}}/game-service:latest
           build-args: |
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
             MYSQL_URL=${{ secrets.GAMEDB_URL }}
