@@ -3,9 +3,9 @@ spring:
     name: GAME-SERVICE
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/game-db
-    username: root
-    password: yuzarsif
+    url: ${MYSQL_URL}
+    username: avnadmin
+    password: ${MYSQL_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -14,7 +14,6 @@ spring:
       dialect: org.hibernate.dialect.MySQLDialect
   data:
     mongodb:
-      uri: mongodb+srv://yuzarsifkilic:PyBJnq8AO88FeAQ0@cluster0.8yl9pa2.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${MONGODB_URL}
       database: context_share
-
 
