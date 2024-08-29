@@ -19,7 +19,7 @@ WORKDIR /app
 # Copy the jar file to the runtime image
 COPY --from=build /build/app-*.jar /app/
 
-EXPOSE 8088
+EXPOSE 8080
 
 # Run the application with the dynamically determined JAR name
 CMD ["sh", "-c", "java -jar /app/app-*.jar"]
