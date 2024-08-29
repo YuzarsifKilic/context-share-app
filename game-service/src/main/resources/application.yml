@@ -17,3 +17,5 @@ spring:
       uri: ${MONGODB_URL}
       database: context_share
 
+server:
+  port: 8080
