@@ -97,7 +97,7 @@ jobs:
 
         - name: Deploy to Google Cloud Run
           run: |
-            gcloud run deploy game-service \
+            gcloud run deploy game-service-ms \
             --image=${{ secrets.DOCKER_USERNAME }}/game-service:latest \
             --platform=managed \
             --region=europe-west3 \
