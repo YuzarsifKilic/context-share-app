@@ -23,7 +23,7 @@ jobs:
           distribution: 'corretto'
           java-version: 21
       - name: Grant execute permission for gradlew
-        run: chmod +x game-service/gradlew
+        run: chmod +x game-service/mvnw
       - name: Compile Project
         run: |
           cd game-service
