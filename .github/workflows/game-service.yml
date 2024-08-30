@@ -103,4 +103,4 @@ jobs:
             --region=europe-west3 \
             --allow-unauthenticated \
             --revision-suffix=$(date +%s) \
-            --set-env-vars "PORT=8080,MYSQL_URL=${{ secrets.MYSQL_URL }},MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }},MONGODB_URL=${{ secrets.MONGODB_URL }}"
+            --set-env-vars "MYSQL_URL=${{ secrets.MYSQL_URL }},MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }},MONGODB_URL=${{ secrets.MONGODB_URL }}"
