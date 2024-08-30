@@ -1,16 +1,13 @@
 package com.yuzarsif.gameservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yuzarsif.gameservice.client.SteamClient;
-import com.yuzarsif.gameservice.client.response.AppDetailsResponse;
-import com.yuzarsif.gameservice.client.response.AppListResponse;
 import com.yuzarsif.gameservice.dto.GameDto;
 import com.yuzarsif.gameservice.dto.GameListDto;
 import com.yuzarsif.gameservice.dto.PageResponse;
 import com.yuzarsif.gameservice.dto.request.*;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.*;
-import com.yuzarsif.gameservice.repository.GameRepository;
+import com.yuzarsif.gameservice.repository.jpa.GameRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

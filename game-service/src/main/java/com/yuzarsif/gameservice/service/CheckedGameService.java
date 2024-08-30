@@ -1,7 +1,7 @@
 package com.yuzarsif.gameservice.service;
 
 import com.yuzarsif.gameservice.model.CheckedGame;
-import com.yuzarsif.gameservice.repository.CheckedGameRepository;
+import com.yuzarsif.gameservice.repository.mongodb.CheckedGameRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,10 +1,9 @@
 package com.yuzarsif.gameservice.service;
 
-import com.yuzarsif.gameservice.dto.DeveloperDto;
 import com.yuzarsif.gameservice.dto.request.CreateDeveloperRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Developer;
-import com.yuzarsif.gameservice.repository.DeveloperRepository;
+import com.yuzarsif.gameservice.repository.jpa.DeveloperRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

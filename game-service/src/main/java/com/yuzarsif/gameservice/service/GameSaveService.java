@@ -7,7 +7,7 @@ import com.yuzarsif.gameservice.client.response.AppListResponse;
 import com.yuzarsif.gameservice.dto.request.*;
 import com.yuzarsif.gameservice.model.*;
 import com.yuzarsif.gameservice.model.Currency;
-import com.yuzarsif.gameservice.repository.GameRepository;
+import com.yuzarsif.gameservice.repository.jpa.GameRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

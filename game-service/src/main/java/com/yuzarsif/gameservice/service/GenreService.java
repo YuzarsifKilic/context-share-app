@@ -3,7 +3,7 @@ package com.yuzarsif.gameservice.service;
 import com.yuzarsif.gameservice.dto.request.CreateGenreRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Genre;
-import com.yuzarsif.gameservice.repository.GenreRepository;
+import com.yuzarsif.gameservice.repository.jpa.GenreRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

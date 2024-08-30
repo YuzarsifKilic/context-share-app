@@ -1,4 +1,4 @@
-package com.yuzarsif.gameservice.repository;
+package com.yuzarsif.gameservice.repository.jpa;
 
 import com.yuzarsif.gameservice.model.Genre;
 import org.springframework.data.jpa.repository.JpaRepository;

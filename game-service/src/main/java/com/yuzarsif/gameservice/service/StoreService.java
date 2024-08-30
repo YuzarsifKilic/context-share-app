@@ -7,7 +7,7 @@ import com.yuzarsif.gameservice.model.Currency;
 import com.yuzarsif.gameservice.model.Game;
 import com.yuzarsif.gameservice.model.Platform;
 import com.yuzarsif.gameservice.model.Store;
-import com.yuzarsif.gameservice.repository.StoreRepository;
+import com.yuzarsif.gameservice.repository.jpa.StoreRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import com.yuzarsif.gameservice.utils.TimeConverter;
 import lombok.extern.slf4j.Slf4j;

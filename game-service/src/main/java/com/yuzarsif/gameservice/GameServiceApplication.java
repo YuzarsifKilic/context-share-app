@@ -1,14 +1,8 @@
 package com.yuzarsif.gameservice;
 
 import com.yuzarsif.gameservice.client.SteamClient;
-import com.yuzarsif.gameservice.client.response.AppDetailsResponse;
-import com.yuzarsif.gameservice.client.response.AppListResponse;
-import com.yuzarsif.gameservice.exception.DateFormatterException;
-import com.yuzarsif.gameservice.model.Language;
 import com.yuzarsif.gameservice.model.Platform;
-import com.yuzarsif.gameservice.model.SystemRequirement;
-import com.yuzarsif.gameservice.repository.LanguageRepository;
-import com.yuzarsif.gameservice.repository.PlatformRepository;
+import com.yuzarsif.gameservice.repository.jpa.PlatformRepository;
 import com.yuzarsif.gameservice.service.GameSaveService;
 import com.yuzarsif.gameservice.service.GameService;
 import com.yuzarsif.gameservice.service.SystemRequirementService;
@@ -17,10 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @SpringBootApplication

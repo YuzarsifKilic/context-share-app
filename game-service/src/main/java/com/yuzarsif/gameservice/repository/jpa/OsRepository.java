@@ -1,7 +1,6 @@
-package com.yuzarsif.gameservice.repository;
+package com.yuzarsif.gameservice.repository.jpa;
 
 import com.yuzarsif.gameservice.model.Os;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
