@@ -30,6 +30,29 @@ public class GameSaveService {
     private final StoreService storeService;
     private final CheckedGameService checkedGameService;
     private final LanguageService languageService;
+    private volatile boolean running = false;
+    private Thread clientThread;
+
+    public void startClient() {
+        running = true;
+        clientThread = new Thread(() -> {
+            while (running) {
+                try {
+                    this.saveGamesBySteamClient();
+                } catch (JsonProcessingException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        clientThread.start();
+    }
+
+    public void stopClient() {
+        running = false;
+        if (clientThread != null) {
+            clientThread.interrupt();
+        }
+    }
 
     public void saveGamesBySteamClient() throws JsonProcessingException, InterruptedException {
         AppListResponse apps = steamClient.getApps();
