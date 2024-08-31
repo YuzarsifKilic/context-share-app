@@ -7,9 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="game-service" />
         <module name="movie-service" />
         <module name="series-service" />
+        <module name="user-service" />
+        <module name="game-service" />
+        <module name="review-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -17,7 +19,9 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="game-service" options="-parameters" />
       <module name="movie-service" options="-parameters" />
+      <module name="review-service" options="-parameters" />
       <module name="series-service" options="-parameters" />
+      <module name="user-service" options="-parameters" />
     </option>
   </component>
 </project>

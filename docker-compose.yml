@@ -62,6 +62,17 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD=yuzarsif
       - ME_CONFIG_MONGODB_SERVER=mongodb
 
+  review-mongodb:
+    image: mongo
+    container_name: review_mongo_db
+    ports:
+      - 27018:27017
+    volumes:
+      - review_mongo:/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=yuzarsif
+      - MONGO_INITDB_ROOT_PASSWORD=yuzarsif
+
 networks:
   microservice-network:
     driver: bridge
@@ -71,3 +82,4 @@ volumes:
   movie-db-data:
   series-db-data:
   mongo:
+  review_mongo:

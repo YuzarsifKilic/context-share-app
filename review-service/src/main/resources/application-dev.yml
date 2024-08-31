@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      username: yuzarsif
+      password: yuzarsif
+      host: localhost
+      port: 27018
+      database: reviews
+      authentication-database: admin
+
+server:
+  port: 8083

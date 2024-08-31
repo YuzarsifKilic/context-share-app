@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: USER-SERVICE
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    properties:
+      dialect: org.hibernate.dialect.MySQLDialect

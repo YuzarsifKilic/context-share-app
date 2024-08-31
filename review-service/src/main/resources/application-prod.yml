@@ -1,0 +1,8 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URL}
+      database: reviews
+
+server:
+  port: 8080
