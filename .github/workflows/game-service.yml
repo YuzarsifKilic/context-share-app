@@ -77,7 +77,7 @@ jobs:
             MYSQL_URL=${{ secrets.GAMEDB_URL }}
             MYSQL_PASSWORD=${{ secrets.GAMEDB_PASSWORD }}
             MONGODB_URL=${{ secrets.GAMEDB_MONGO_URL }}
-            ACTIVE_PROFILE=${{ secrets.ACTIVE_PROFILE }}
+            SPRING_PROFLES_ACTIVE=${{ secrets.ACTIVE_PROFILE }}
 
   deploy:
     name: Deploy to Google Cloud
@@ -104,4 +104,4 @@ jobs:
             --region=europe-west3 \
             --allow-unauthenticated \
             --revision-suffix=$(date +%s) \
-            --set-env-vars "MYSQL_URL=${{ secrets.GAMEDB_URL }},MYSQL_PASSWORD=${{ secrets.GAMEDB_PASSWORD }},MONGODB_URL=${{ secrets.GAMEDB_MONGO_URL }}, ACTIVE_PROFILE=${{ secrets.ACTIVE_PROFILE }}"
+            --set-env-vars "MYSQL_URL=${{ secrets.GAMEDB_URL }},MYSQL_PASSWORD=${{ secrets.GAMEDB_PASSWORD }},MONGODB_URL=${{ secrets.GAMEDB_MONGO_URL }}, SPRING_PROFILES_ACTIVE=${{ secrets.ACTIVE_PROFILE }}"
