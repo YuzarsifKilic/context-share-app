@@ -4,7 +4,7 @@ import com.yuzarsif.gameservice.dto.ProcessorDto;
 import com.yuzarsif.gameservice.dto.request.CreateProcessorRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Processor;
-import com.yuzarsif.gameservice.repository.jpa.ProcessorRepository;
+import com.yuzarsif.gameservice.repository.ProcessorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

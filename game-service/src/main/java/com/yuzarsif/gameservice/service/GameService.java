@@ -7,7 +7,7 @@ import com.yuzarsif.gameservice.dto.PageResponse;
 import com.yuzarsif.gameservice.dto.request.*;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.*;
-import com.yuzarsif.gameservice.repository.jpa.GameRepository;
+import com.yuzarsif.gameservice.repository.GameRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

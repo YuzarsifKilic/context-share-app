@@ -3,7 +3,7 @@ package com.yuzarsif.gameservice.service;
 import com.yuzarsif.gameservice.dto.request.CreatePublisherRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Publisher;
-import com.yuzarsif.gameservice.repository.jpa.PublisherRepository;
+import com.yuzarsif.gameservice.repository.PublisherRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

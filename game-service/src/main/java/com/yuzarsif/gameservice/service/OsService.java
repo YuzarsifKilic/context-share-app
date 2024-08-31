@@ -4,7 +4,7 @@ import com.yuzarsif.gameservice.dto.OsDto;
 import com.yuzarsif.gameservice.dto.request.CreateOsRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Os;
-import com.yuzarsif.gameservice.repository.jpa.OsRepository;
+import com.yuzarsif.gameservice.repository.OsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

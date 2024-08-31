@@ -3,7 +3,7 @@ package com.yuzarsif.gameservice.service;
 import com.yuzarsif.gameservice.dto.request.CreatePlatformRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Platform;
-import com.yuzarsif.gameservice.repository.jpa.PlatformRepository;
+import com.yuzarsif.gameservice.repository.PlatformRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

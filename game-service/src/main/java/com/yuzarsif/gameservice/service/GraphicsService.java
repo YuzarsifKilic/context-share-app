@@ -4,7 +4,7 @@ import com.yuzarsif.gameservice.dto.GraphicsDto;
 import com.yuzarsif.gameservice.dto.request.CreateGraphicsRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Graphics;
-import com.yuzarsif.gameservice.repository.jpa.GraphicsRepository;
+import com.yuzarsif.gameservice.repository.GraphicsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

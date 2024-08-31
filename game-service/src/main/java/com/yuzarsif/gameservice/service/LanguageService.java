@@ -3,7 +3,7 @@ package com.yuzarsif.gameservice.service;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.CheckedGame;
 import com.yuzarsif.gameservice.model.Language;
-import com.yuzarsif.gameservice.repository.jpa.LanguageRepository;
+import com.yuzarsif.gameservice.repository.LanguageRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

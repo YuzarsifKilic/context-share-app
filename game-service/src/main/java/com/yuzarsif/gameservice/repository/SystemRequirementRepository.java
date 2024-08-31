@@ -1,4 +1,4 @@
-package com.yuzarsif.gameservice.repository.jpa;
+package com.yuzarsif.gameservice.repository;
 
 import com.yuzarsif.gameservice.model.SystemRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;

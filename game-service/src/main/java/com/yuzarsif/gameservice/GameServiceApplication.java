@@ -2,7 +2,7 @@ package com.yuzarsif.gameservice;
 
 import com.yuzarsif.gameservice.client.SteamClient;
 import com.yuzarsif.gameservice.model.Platform;
-import com.yuzarsif.gameservice.repository.jpa.PlatformRepository;
+import com.yuzarsif.gameservice.repository.PlatformRepository;
 import com.yuzarsif.gameservice.service.GameSaveService;
 import com.yuzarsif.gameservice.service.GameService;
 import com.yuzarsif.gameservice.service.SystemRequirementService;

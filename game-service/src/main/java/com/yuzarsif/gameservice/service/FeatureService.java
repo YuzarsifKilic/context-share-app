@@ -3,7 +3,7 @@ package com.yuzarsif.gameservice.service;
 import com.yuzarsif.gameservice.dto.request.CreateFeatureRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.Feature;
-import com.yuzarsif.gameservice.repository.jpa.FeatureRepository;
+import com.yuzarsif.gameservice.repository.FeatureRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
