@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: ${MYSQL_URL}
+    username: avnadmin
+    password: ${MYSQL_PASSWORD}
+  data:
+    mongodb:
+      uri: ${MONGODB_URL}
+      database: context_share
+
+server:
+  port: 8080

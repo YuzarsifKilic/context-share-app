@@ -25,5 +25,9 @@ export const routes: Routes = [
   {
     path: 'movie',
     component: MovieHomeComponent
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
   }
 ];

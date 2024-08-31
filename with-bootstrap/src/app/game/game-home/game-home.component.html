@@ -1,19 +1,12 @@
-<div class="container d-flex justify-content-center">
-  <div class="container mt-4 d-flex gap-2">
-    <div *ngFor="let game of games" class="col-3">
-      <mat-card class="example-card" appearance="outlined" (click)="gameDetail(game.id)">
-        <mat-card-header class="m-1">
-          <mat-card-title>{{game.name}}</mat-card-title>
-        </mat-card-header>
-        <img mat-card-image class="my-2" src="{{game.mainImage}}" alt="Photo of {{game.name}}">
-        <mat-card-content class="mt-2">
-          {{game.description}}
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-button>LIKE</button>
-          <button mat-button>SHARE</button>
-        </mat-card-actions>
-      </mat-card>
+<div class="container">
+  <div class="row">
+    <div *ngFor="let game of games" class="col-md-3 mb-4">
+      <div class="card" [id]="game.id">
+        <img class="card-img-top" [src]="game.mainImage" [alt]="game.name">
+        <div class="card-body">
+          <h5 class="card-title" (click)="gameDetail(game.id)">{{ game.name }}</h5>
+        </div>
+      </div>
     </div>
   </div>
 </div>

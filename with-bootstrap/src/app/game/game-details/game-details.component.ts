@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {GameService} from "../../_services/game.service";
 import {NgForOf, NgIf} from "@angular/common";
-import {CommentsComponent} from "../../comments/comments.component";
 
 @Component({
   selector: 'app-game-details',
@@ -10,7 +9,6 @@ import {CommentsComponent} from "../../comments/comments.component";
   imports: [
     NgForOf,
     NgIf,
-    CommentsComponent
   ],
   templateUrl: './game-details.component.html',
   styleUrl: './game-details.component.css'

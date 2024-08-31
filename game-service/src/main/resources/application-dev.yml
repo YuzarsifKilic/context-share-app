@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: ${MYSQL_URL}
+    username: root
+    password: ${MYSQL_PASSWORD}
+  data:
+    mongodb:
+      username: yuzarsif
+      password: yuzarsif
+      host: localhost
+      port: 27017
+      database: context_share
+      authentication-database: admin
+
+server:
+  port: 8082

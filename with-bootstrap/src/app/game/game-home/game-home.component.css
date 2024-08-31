@@ -1,7 +1,15 @@
-.big-screen {
-  height: 100vh;
+.row {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.example-card:hover{
-  background-color: #f5f5f5;
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-title:hover {
+  color: #0071ef;
+  cursor: pointer;
 }

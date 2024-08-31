@@ -1,21 +1,12 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: GAME-SERVICE
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: ${MYSQL_URL}
-    username: avnadmin
-    password: ${MYSQL_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
     database: mysql
     properties:
       dialect: org.hibernate.dialect.MySQLDialect
-  data:
-    mongodb:
-      uri: ${MONGODB_URL}
-      database: context_share
 
-server:
-  port: 8080
