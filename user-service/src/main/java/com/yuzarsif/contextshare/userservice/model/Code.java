@@ -21,7 +21,7 @@ public class Code {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
-    private String userId;
+    private String email;
     private Integer code;
     @CreationTimestamp
     private LocalDateTime createdAt;

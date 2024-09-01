@@ -4,6 +4,13 @@ spring:
     url: ${MYSQL_URL}
     username: root
     password: ${MYSQL_PASSWORD}
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: userVerification:com.yuzarsif.contextshare.userservice.kafka.UserVerification
 
 server:
   port: 8084
