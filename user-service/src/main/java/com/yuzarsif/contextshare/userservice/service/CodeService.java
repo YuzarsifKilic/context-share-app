@@ -3,6 +3,7 @@ package com.yuzarsif.contextshare.userservice.service;
 import com.yuzarsif.contextshare.userservice.kafka.UserVerification;
 import com.yuzarsif.contextshare.userservice.kafka.UserVerificationProducer;
 import com.yuzarsif.contextshare.userservice.model.Code;
+import com.yuzarsif.contextshare.userservice.model.User;
 import com.yuzarsif.contextshare.userservice.repository.CodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,15 +18,15 @@ public class CodeService {
     private final CodeRepository codeRepository;
     private final UserVerificationProducer userVerificationProducer;
 
-    public void createCode(String email) {
+    public void createCode(User user) {
         Random random = new Random();
         Code code = Code
                 .builder()
-                .email(email)
+                .email(user.getEmail())
                 .code(100000 + random.nextInt(900000))
                 .build();
 
-        userVerificationProducer.produceUserVerification(new UserVerification(email, code.getCode()));
+        userVerificationProducer.produceUserVerification(new UserVerification(user.getEmail(), user.getFirstName(), user.getLastName(), code.getCode()));
 
         codeRepository.save(code);
     }

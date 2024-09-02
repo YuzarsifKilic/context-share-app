@@ -36,7 +36,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        codeService.createCode(savedUser.getId());
+        codeService.createCode(savedUser);
 
         return UserDto.convert(savedUser);
     }
