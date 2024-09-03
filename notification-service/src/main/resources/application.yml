@@ -7,9 +7,11 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.type.mapping: userVerification:com.yuzarsif.contextshare.notificationservice.kafka.user.UserVerification
+  profiles:
+    active: dev
 
   mail:
-    host: smtp.gmail.com
+    host: sandbox.smtp.mailtrap.io
     port: 587
     properties:
       mail:

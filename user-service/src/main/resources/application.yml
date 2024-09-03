@@ -7,3 +7,5 @@ spring:
     database: mysql
     properties:
       dialect: org.hibernate.dialect.MySQLDialect
+  profiles:
+    active: dev

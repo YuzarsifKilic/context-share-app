@@ -16,8 +16,6 @@ public class NotificationServiceApplication {
 	@Bean
 	public CommandLineRunner init(EmailService emailService) {
 		return args -> {
-			emailService.sendSimpleMessage("yuzarsifkilic@gmail.com", "Yusuf", "Kilic");
-			emailService.sendVerificationEmail("yuzarsifkilic@gmail.com", "Yusuf", "Kilic", 123456);
 		};
 	}
 

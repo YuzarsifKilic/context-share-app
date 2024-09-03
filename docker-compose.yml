@@ -40,6 +40,7 @@ services:
       - 3310:3306
     networks:
       - microservice-network
+
   mongodb:
     image: mongo
     container_name: mongo_db
@@ -106,6 +107,20 @@ services:
     depends_on:
       - kafka
 
+  user-db:
+    container_name: user-db
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: yuzarsif
+      MYSQL_DATABASE: user-db
+    volumes:
+      - user-db-data:/var/lib/mysql
+    ports:
+      - 3312:3306
+    networks:
+      - microservice-network
+
 networks:
   microservice-network:
     driver: bridge
@@ -116,3 +131,4 @@ volumes:
   series-db-data:
   mongo:
   review_mongo:
+  user-db-data:

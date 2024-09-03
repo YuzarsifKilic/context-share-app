@@ -1,8 +1,6 @@
 package com.yuzarsif.contextshare.userservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -23,6 +21,8 @@ public class Code {
     private Long id;
     private String email;
     private Integer code;
+    @Enumerated(EnumType.STRING)
+    private Purpose purpose;
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

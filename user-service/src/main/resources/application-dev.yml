@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: ${MYSQL_URL}
+    url: jdbc:mysql://localhost:3312/user-db
     username: root
-    password: ${MYSQL_PASSWORD}
+    password: yuzarsif
   kafka:
     producer:
       bootstrap-servers: localhost:9092
@@ -14,3 +14,6 @@ spring:
 
 server:
   port: 8084
+
+jwt:
+  key: 5b5YqfHs3KfJg9qH5OZwQ2O1z5pGv9oJmsqpe8T/tQ8=
