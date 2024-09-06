@@ -52,4 +52,9 @@ public class GameController {
             @RequestBody SearchByGenreRequest searchByGenre) {
         return ResponseEntity.ok(gameService.findByGenres(searchByGenre));
     }
+
+    @GetMapping("/check/{id}")
+    public ResponseEntity<Boolean> checkGameExist(@PathVariable Long id) {
+        return ResponseEntity.ok(gameService.checkGameExist(id));
+    }
 }

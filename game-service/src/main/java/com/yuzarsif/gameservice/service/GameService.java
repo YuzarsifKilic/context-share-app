@@ -152,4 +152,8 @@ public class GameService {
         return GameDto.convert(findById(id));
     }
 
+    public Boolean checkGameExist(Long id) {
+        return gameRepository.existsById(id);
+    }
+
 }

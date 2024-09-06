@@ -6,3 +6,7 @@ spring:
 
 server:
   port: 8080
+
+clients:
+  user-service: ${USER_SERVICE_URL}
+  game-service: ${GAME_SERVICE_URL}

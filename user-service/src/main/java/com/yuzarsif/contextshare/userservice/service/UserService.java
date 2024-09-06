@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -57,6 +59,14 @@ public class UserService {
 
     public Long userCount() {
         return userRepository.count();
+    }
+
+    public Boolean checkUserExist(String id) {
+        return userRepository.existsById(id);
+    }
+
+    public List<UserDto> findUsersByIdList(List<String> ids) {
+        return UserDto.convert(userRepository.findAllById(ids));
     }
 
 

@@ -10,3 +10,7 @@ spring:
 
 server:
   port: 8083
+
+clients:
+  user-service: http://localhost:8084
+  game-service: http://localhost:8086
