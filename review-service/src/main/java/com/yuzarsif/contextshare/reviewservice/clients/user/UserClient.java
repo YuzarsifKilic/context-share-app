@@ -1,5 +1,6 @@
 package com.yuzarsif.contextshare.reviewservice.clients.user;
 
+import com.yuzarsif.contextshare.reviewservice.clients.CustomErrorHandler;
 import com.yuzarsif.contextshare.reviewservice.exception.ClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -32,18 +35,13 @@ public class UserClient {
 
         HttpEntity<Boolean> requestEntity = new HttpEntity<>(headers);
 
-        try {
-            ResponseEntity<Boolean> response = restTemplate.exchange(
-                    userServiceUrl + "/api/v1/users/check/" + userId,
-                    HttpMethod.GET,
-                    requestEntity,
-                    Boolean.class);
-            System.out.println(response);
-            log.info("User Client response: " + response.getBody());
-            return response.getBody();
-        } catch (Exception e) {
-            throw new ClientException("User Service is not available or " + userServiceUrl + "/api/v1/users/check/" + userId + " is not working");
-        }
+        restTemplate.setErrorHandler(new CustomErrorHandler());
+        ResponseEntity<Boolean> response = restTemplate.exchange(
+                userServiceUrl + "/api/v1/users/check/" + userId,
+                HttpMethod.GET,
+                requestEntity,
+                Boolean.class);
+        return response.getBody();
     }
 
     public List<UserResponse> findUsersByIdList(List<String> ids) {
@@ -52,18 +50,14 @@ public class UserClient {
 
         HttpEntity<List<String>> requestEntity = new HttpEntity<>(ids, headers);
 
-        try {
-            ResponseEntity<List<UserResponse>> response = restTemplate.exchange(
-                    userServiceUrl + "/api/v1/users/find-by-id-list",
-                    HttpMethod.POST,
-                    requestEntity,
-                    new ParameterizedTypeReference<List<UserResponse>>(){} );
-            log.info("User Client response: " + response.getBody());
-            return response.getBody();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-
+        restTemplate.setErrorHandler(new CustomErrorHandler());
+        ResponseEntity<List<UserResponse>> response = restTemplate.exchange(
+                userServiceUrl + "/api/v1/users/find-by-id-list",
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<List<UserResponse>>() {
+                });
+        log.info("User Client response: " + response.getBody());
+        return response.getBody();
     }
 }

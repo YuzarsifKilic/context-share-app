@@ -9,6 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
@@ -29,16 +31,12 @@ public class GameClient {
 
         HttpEntity<Boolean> requestEntity = new HttpEntity<>(headers);
 
-        try {
-            ResponseEntity<Boolean> response = restTemplate.exchange(
-                    gameServiceUrl + "/api/v1/games/check/" + gameId,
-                    HttpMethod.GET,
-                    requestEntity,
-                    Boolean.class);
-            log.info("Game Client response: " + response.getBody());
-            return response.getBody();
-        } catch (Exception e) {
-            throw new ClientException("Game Service is not available or " + gameServiceUrl + "/api/v1/games/check" + gameId + " is not working");
-        }
+        restTemplate.setErrorHandler(new CustomErrorHandler());
+        ResponseEntity<Boolean> response = restTemplate.exchange(
+                gameServiceUrl + "/api/v1/games/check/" + gameId,
+                HttpMethod.GET,
+                requestEntity,
+                Boolean.class);
+        return response.getBody();
     }
 }
