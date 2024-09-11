@@ -6,7 +6,7 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
-        spring.json.type.mapping: userVerification:com.yuzarsif.contextshare.notificationservice.kafka.user.UserVerification
+        spring.json.type.mapping: userVerification:com.yuzarsif.contextshare.notificationservice.kafka.user.UserVerification, reviewNotification:com.yuzarsif.contextshare.notificationservice.kafka.review.ReviewNotification
   profiles:
     active: dev
 

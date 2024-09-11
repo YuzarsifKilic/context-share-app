@@ -1,14 +1,22 @@
 package com.yuzarsif.contextshare.reviewservice.service;
 
-import com.yuzarsif.contextshare.reviewservice.clients.GameClient;
+import com.yuzarsif.contextshare.reviewservice.clients.game.GameClient;
+import com.yuzarsif.contextshare.reviewservice.clients.game.GameListDto;
 import com.yuzarsif.contextshare.reviewservice.clients.user.UserClient;
 import com.yuzarsif.contextshare.reviewservice.clients.user.UserResponse;
+import com.yuzarsif.contextshare.reviewservice.dto.CreateReplyRequest;
 import com.yuzarsif.contextshare.reviewservice.dto.CreateReviewRequest;
+import com.yuzarsif.contextshare.reviewservice.dto.ReplyDto;
 import com.yuzarsif.contextshare.reviewservice.dto.ReviewDto;
 import com.yuzarsif.contextshare.reviewservice.exception.ClientResponseException;
+import com.yuzarsif.contextshare.reviewservice.exception.ReviewNotFoundException;
 import com.yuzarsif.contextshare.reviewservice.exception.UserException;
+import com.yuzarsif.contextshare.reviewservice.kafka.ReplyProducer;
+import com.yuzarsif.contextshare.reviewservice.kafka.ReviewNotification;
 import com.yuzarsif.contextshare.reviewservice.model.ContextType;
+import com.yuzarsif.contextshare.reviewservice.model.Reply;
 import com.yuzarsif.contextshare.reviewservice.model.Review;
+import com.yuzarsif.contextshare.reviewservice.repository.ReplyRepository;
 import com.yuzarsif.contextshare.reviewservice.repository.ReviewRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +33,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserClient userClient;
     private final GameClient gameClient;
+    private final ReplyRepository replyRepository;
+    private final ReplyProducer replyProducer;
 
     public void createReview(CreateReviewRequest createReviewRequest) {
         // TODO: check if user exists
@@ -63,12 +73,82 @@ public class ReviewService {
         List<String> userIds = new ArrayList<>();
         List<Review> byContextIdAndContextType = reviewRepository.findByContextIdAndContextType(contextId, ContextType.valueOf(contextType));
         byContextIdAndContextType
-                .forEach(review -> userIds.add(review.getUserId()));
+                .forEach(review -> {
+                    userIds.add(review.getUserId());
+                });
         List<UserResponse> usersByIdList = userClient.findUsersByIdList(userIds);
         // TODO: create reviewdto with user fields
         List<ReviewDto> reviewDtoList = IntStream.range(0, byContextIdAndContextType.size())
                 .mapToObj(i -> ReviewDto.convert(byContextIdAndContextType.get(i), usersByIdList.get(i)))
                 .toList();
         return reviewDtoList;
+    }
+
+    public void reply(String reviewId, CreateReplyRequest request) {
+        // TODO: check if review exists
+        Review review = reviewRepository.findById(reviewId).orElseThrow();
+
+        String contextName = "";
+
+        // TODO: get context from review
+        if (review.getContextType() == ContextType.GAME) {
+            GameListDto gameInfo = gameClient.getGameInfo(review.getContextId());
+            contextName = gameInfo.name();
+        }
+
+        // TODO: check if user exists
+        Boolean userExist = userClient.checkUserExist(request.userId());
+        if (!userExist) {
+            throw new UserException("User not found with id: " + request.userId());
+        }
+
+        // TODO: get user
+        UserResponse userResponse = userClient.findUserById(request.userId());
+
+        Reply reply = Reply
+                .builder()
+                .userId(request.userId())
+                .comment(request.comment())
+                .build();
+
+        Reply savedReply = replyRepository.save(reply);
+
+        if (review.getReplies() == null) {
+            List<Reply> replies = new ArrayList<>();
+            replies.add(savedReply);
+            review.setReplies(replies);
+        } else {
+            review.getReplies().add(reply);
+        }
+
+        Review savedReview = reviewRepository.save(review);
+
+        // TODO: send notification
+        replyProducer.produceReviewNotification(new ReviewNotification(
+                userResponse.email(),
+                userResponse.firstName(),
+                userResponse.lastName(),
+                contextName,
+                savedReview.getComment()));
+    }
+
+    public List<ReplyDto> getReplies(String reviewId) {
+        // TODO: check if review exists
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review not found with id: " + reviewId));
+
+        List<Reply> replies = review.getReplies();
+
+        List<String> userIds = replies.stream()
+                .map(Reply::getUserId)
+                .toList();
+
+        List<UserResponse> usersByIdList = userClient.findUsersByIdList(userIds);
+
+        List<ReplyDto> replyDtoList = IntStream.range(0, replies.size())
+                .mapToObj(i -> ReplyDto.convert(replies.get(i), usersByIdList.get(i)))
+                .toList();
+
+        return replyDtoList;
     }
 }

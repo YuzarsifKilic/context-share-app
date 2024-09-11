@@ -60,4 +60,20 @@ public class UserClient {
         log.info("User Client response: " + response.getBody());
         return response.getBody();
     }
+
+    public UserResponse findUserById(String id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+
+        HttpEntity<Boolean> requestEntity = new HttpEntity<>(headers);
+
+        restTemplate.setErrorHandler(new CustomErrorHandler());
+        ResponseEntity<UserResponse> response = restTemplate.exchange(
+                userServiceUrl + "/api/v1/users/" + id,
+                HttpMethod.GET,
+                requestEntity,
+                UserResponse.class);
+        log.info("User Client response: " + response.getBody());
+        return response.getBody();
+    }
 }

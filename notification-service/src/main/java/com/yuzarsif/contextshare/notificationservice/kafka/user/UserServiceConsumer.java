@@ -1,7 +1,6 @@
-package com.yuzarsif.contextshare.notificationservice.kafka;
+package com.yuzarsif.contextshare.notificationservice.kafka.user;
 
 import com.yuzarsif.contextshare.notificationservice.email.EmailService;
-import com.yuzarsif.contextshare.notificationservice.kafka.user.UserVerification;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

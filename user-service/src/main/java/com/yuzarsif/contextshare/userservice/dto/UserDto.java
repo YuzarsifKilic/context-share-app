@@ -20,8 +20,8 @@ public record UserDto(
                 from.getId(),
                 from.getFirstName(),
                 from.getLastName(),
-                from.getEmail(),
                 from.getPhone(),
+                from.getEmail(),
                 from.getRole(),
                 from.getEnable());
     }

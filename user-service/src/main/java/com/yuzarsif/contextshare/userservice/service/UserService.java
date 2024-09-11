@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,7 +68,12 @@ public class UserService {
     }
 
     public List<UserDto> findUsersByIdList(List<String> ids) {
-        return UserDto.convert(userRepository.findAllById(ids));
+        List<User> allByIdIn = userRepository.findAllByIdIn(ids);
+        Map<String, User> userMap = allByIdIn.stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+        return UserDto.convert(ids.stream()
+                .map(userMap::get)
+                .collect(Collectors.toList()));
     }
 
 

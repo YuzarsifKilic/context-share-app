@@ -57,4 +57,9 @@ public class GameController {
     public ResponseEntity<Boolean> checkGameExist(@PathVariable Long id) {
         return ResponseEntity.ok(gameService.checkGameExist(id));
     }
+
+    @GetMapping("/info/{id}")
+    public ResponseEntity<GameListDto> getGameInfo(@PathVariable Long id) {
+        return ResponseEntity.ok(gameService.getGameInfo(id));
+    }
 }

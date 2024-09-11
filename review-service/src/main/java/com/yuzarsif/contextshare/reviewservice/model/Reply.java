@@ -5,20 +5,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document("reviews")
+@Document("replies")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class Review {
+public class Reply {
 
     private String id;
     private String userId;
-    private ContextType contextType;
-    private Long contextId;
     private String comment;
-    private Float rating;
-    private List<Reply> replies;
 
 }

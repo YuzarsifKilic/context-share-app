@@ -156,4 +156,7 @@ public class GameService {
         return gameRepository.existsById(id);
     }
 
+    public GameListDto getGameInfo(Long id) {
+        return GameListDto.convert(findById(id));
+    }
 }

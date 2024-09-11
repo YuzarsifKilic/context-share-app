@@ -1,5 +1,6 @@
 package com.yuzarsif.contextshare.notificationservice.email;
 
+import com.yuzarsif.contextshare.notificationservice.kafka.review.ReviewNotification;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
@@ -48,12 +49,24 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
-    public void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("context.share@gmail.com");
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        mailSender.send(message);
+    public void sendReviewNotification(ReviewNotification reviewNotification) throws MessagingException, IOException, TemplateException {
+        Map<String, Object> templateModel = Map.of(
+                "user_name", reviewNotification.firstName() + " " + reviewNotification.lastName(),
+                "context_name", reviewNotification.contextName(),
+                "reply", reviewNotification.review());
+
+        Context context = new Context();
+        context.setVariables(templateModel);
+
+        String htmlContent = templateEngine.process("review-reply", context);
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(reviewNotification.email());
+        helper.setSubject("Reply Your Comment");
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
     }
 }

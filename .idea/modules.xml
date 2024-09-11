@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/angular-projects.iml" filepath="$PROJECT_DIR$/.idea/angular-projects.iml" />
       <module fileurl="file://$PROJECT_DIR$/movie-service/src/main/main.iml" filepath="$PROJECT_DIR$/movie-service/src/main/main.iml" />
       <module fileurl="file://$PROJECT_DIR$/movie-service/src/test/test.iml" filepath="$PROJECT_DIR$/movie-service/src/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user-service/user-service.iml" filepath="$PROJECT_DIR$/user-service/user-service.iml" />
     </modules>
   </component>
 </project>
