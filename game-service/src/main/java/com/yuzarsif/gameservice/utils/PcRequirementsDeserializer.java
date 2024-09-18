@@ -1,13 +1,12 @@
 package com.yuzarsif.gameservice.utils;
 
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yuzarsif.gameservice.client.response.AppDetailsResponse;
+import com.yuzarsif.gameservice.client.steam.response.AppDetailsResponse;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.yuzarsif.gameservice.client.response;
+package com.yuzarsif.gameservice.client.steam.response;
 
 import lombok.Data;
 import lombok.ToString;

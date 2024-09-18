@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,5 +86,17 @@ public class LanguageService {
                             .build();
                     return languageRepository.save(newLanguage);
                 });
+    }
+
+    public Optional<Language> findByName(String name) {
+        return languageRepository.findByName(name);
+    }
+
+    public Language saveLanguage(String name) {
+        Language language = Language
+                .builder()
+                .name(name)
+                .build();
+        return languageRepository.save(language);
     }
 }

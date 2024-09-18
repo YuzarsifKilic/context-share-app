@@ -8,8 +8,8 @@ public record SystemRequirementDto(
     Long id,
     OsDto os,
     List<ProcessorDto> processor,
-    Integer memory,
-    Integer storage,
+//    Integer memory,
+//    Integer storage,
     List<GraphicsDto> graphics
 ) {
 
@@ -18,8 +18,8 @@ public record SystemRequirementDto(
                 from.getId(),
                 OsDto.convert(from.getOs()),
                 ProcessorDto.convertList(from.getProcessors()),
-                from.getMemory(),
-                from.getStorage(),
+//                from.getMemory(),
+//                from.getStorage(),
                 GraphicsDto.convertList(from.getGraphics())
         );
     }

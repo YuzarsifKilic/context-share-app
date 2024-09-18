@@ -1,6 +1,6 @@
 package com.yuzarsif.gameservice.service;
 
-import com.yuzarsif.gameservice.client.SteamClient;
+import com.yuzarsif.gameservice.client.steam.SteamClient;
 import com.yuzarsif.gameservice.dto.GameDto;
 import com.yuzarsif.gameservice.dto.GameListDto;
 import com.yuzarsif.gameservice.dto.PageResponse;

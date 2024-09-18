@@ -1,6 +1,10 @@
 package com.yuzarsif.gameservice;
 
-import com.yuzarsif.gameservice.client.SteamClient;
+import com.yuzarsif.gameservice.client.epic.EpicClient;
+import com.yuzarsif.gameservice.client.epic.response.CatalogOfferResponse;
+import com.yuzarsif.gameservice.client.epic.response.StoreList;
+import com.yuzarsif.gameservice.client.epic.response.StorePageMappingResponse;
+import com.yuzarsif.gameservice.client.steam.SteamClient;
 import com.yuzarsif.gameservice.model.Platform;
 import com.yuzarsif.gameservice.repository.PlatformRepository;
 import com.yuzarsif.gameservice.service.GameSaveService;
@@ -25,7 +29,8 @@ public class GameServiceApplication {
                                                SteamClient steamClient,
                                                SystemRequirementService systemRequirementService,
                                                GameSaveService gameSaveService,
-                                               PlatformRepository platformRepository) {
+                                               PlatformRepository platformRepository,
+                                               EpicClient epicClient) {
         return args -> {
             Optional<Platform> steam = platformRepository.findByName("STEAM");
             if (steam.isEmpty()) {
@@ -35,7 +40,23 @@ public class GameServiceApplication {
                         .build();
                 platformRepository.save(platform);
             }
+
+            Optional<Platform> epic = platformRepository.findByName("EPIC");
+            if (epic.isEmpty()) {
+                Platform platform = Platform
+                        .builder()
+                        .name("EPIC")
+                        .build();
+                platformRepository.save(platform);
+            }
             //gameSaveService.saveGamesBySteamClient();
+
+//            CatalogOfferResponse catalogOffer = epicClient.getCatalogOffer("en", "e6958dc0e1fe43a38cca9eab6bb96aca", "014e225d587d41ea80c0adb3f33041d0", "US");
+//
+//            System.out.println(catalogOffer);
+
+            gameSaveService.startEpicGames();
+
         };
     }
 

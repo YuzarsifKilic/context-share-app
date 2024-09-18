@@ -1,13 +1,16 @@
 package com.yuzarsif.gameservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.yuzarsif.gameservice.client.SteamClient;
-import com.yuzarsif.gameservice.client.response.AppDetailsResponse;
-import com.yuzarsif.gameservice.client.response.AppListResponse;
+import com.yuzarsif.gameservice.client.epic.EpicClient;
+import com.yuzarsif.gameservice.client.epic.response.*;
+import com.yuzarsif.gameservice.client.steam.SteamClient;
+import com.yuzarsif.gameservice.client.steam.response.AppDetailsResponse;
+import com.yuzarsif.gameservice.client.steam.response.AppListResponse;
 import com.yuzarsif.gameservice.dto.request.*;
 import com.yuzarsif.gameservice.model.*;
 import com.yuzarsif.gameservice.model.Currency;
 import com.yuzarsif.gameservice.repository.GameRepository;
+import com.yuzarsif.gameservice.repository.StoreRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,9 @@ public class GameSaveService {
     private final StoreService storeService;
     private final CheckedGameService checkedGameService;
     private final LanguageService languageService;
+    private final EpicClient epicClient;
+    private final PlatformService platformService;
+    private final StoreRepository storeRepository;
     private volatile boolean running = false;
     private Thread clientThread;
 
@@ -61,11 +67,11 @@ public class GameSaveService {
             log.info("Check game: " + app.getName());
             Optional<Game> optionalGame = gameRepository.findByName(app.getName());
             if (optionalGame.isEmpty() && !Objects.equals(app.getName(), "")) {
-                if (!checkedGameService.existsByGameId(app.getAppid())) {
+                if (! checkedGameService.existsByGameId(String.valueOf(app.getAppid()))) {
                     log.info("Game didnt check before: " + app.getName());
                     AppDetailsResponse appDetails = steamClient.getAppDetails(app.getAppid().toString());
                     CheckedGame checkedGame = new CheckedGame();
-                    checkedGame.setGameId(app.getAppid());
+                    checkedGame.setGameId(String.valueOf(app.getAppid()));
                     checkedGame.setPlatform("Steam");
                     if (appDetails != null && !appDetails.getData().getRelease_date().coming_soon && appDetails.getData().getType().equals("game")) {
                         log.info("Game creating... " + app.getName());
@@ -156,11 +162,26 @@ public class GameSaveService {
                             }
                         }
 
+                        // TODO: set memory and storage
+
                         if (appDetails.getData().getPc_requirements() != null && appDetails.getData().getPc_requirements().minimum != null) {
                             SystemRequirement systemRequirement = systemRequirementService.extractSystemRequirements(appDetails.getData().getPc_requirements().minimum, checkedGame);
 
                             if (systemRequirement != null) {
                                 game.setMinSystemRequirement(systemRequirement);
+                            } else {
+                                checkedGame.setSystemRequirementsEmpty(true);
+                            }
+                        }
+
+                        // TODO: set memory and storage
+
+                        if (appDetails.getData().getPc_requirements() != null && appDetails.getData().getPc_requirements().recommended != null) {
+                            log.info("recommended requirements: " + appDetails.getData().getPc_requirements().recommended);
+                            SystemRequirement systemRequirement = systemRequirementService.extractSystemRequirements(appDetails.getData().getPc_requirements().recommended, checkedGame);
+
+                            if (systemRequirement != null) {
+                                game.setRecommendedSystemRequirement(systemRequirement);
                             } else {
                                 checkedGame.setSystemRequirementsEmpty(true);
                             }
@@ -190,6 +211,168 @@ public class GameSaveService {
             } else {
                 log.error("Game is already saved or name is empty: " + app.getName());
             }
+        }
+    }
+
+    public void startEpicGames() throws InterruptedException {
+        Integer total = 0;
+        StoreList storeList = epicClient.getStoreList(40, 0);
+        while (total < storeList.data.catalog.searchStore.paging.total) {
+            StoreList storeList1 = epicClient.getStoreList(40, total);
+            for (StoreList.Element store: storeList1.data.catalog.searchStore.elements) {
+                CatalogOfferResponse catalogOffer = epicClient.getCatalogOffer("en", store.id, store.namespace, "US");
+                if (checkedGameService.existsByGameId(store.id)) {
+//                    CheckedGame checkedGame = new CheckedGame();
+//                    checkedGame.setGameId(store.id);
+//                    checkedGame.setPlatform("EPIC");
+//                    checkedGameService.save(checkedGame);
+
+                    log.info("Game created: " + catalogOffer.data.catalog.catalogOffer.title + " id: " + store.id);
+
+                    if (gameRepository.findByName(store.title).isEmpty()) {
+                        Game game = Game
+                                .builder()
+                                .name(store.title)
+                                .releaseDate(DateConverter.epicDateToJavaDate(store.releaseDate))
+                                .build();
+
+                        for (StoreList.KeyImage image: store.keyImages) {
+                            if (Objects.equals(image.type, "Thumbnail")) {
+                                game.setMainImage(image.url);
+                            }
+                        }
+
+                        log.info(String.valueOf(store.offerMappings));
+                        if (!store.offerMappings.isEmpty() && store.offerMappings.get(0).pageSlug != null) {
+                            //TODO: extract description - clear description responsex
+
+                            StorePageMappingResponse storePageMapping = epicClient.getStorePageMapping(store.offerMappings.get(0).pageSlug, "en-US");
+
+                            ProductResponse product = epicClient.getProduct(storePageMapping.data.storePageMapping.mapping.productId);
+
+                            Set<Developer> developers = new HashSet<>();
+                            for (String developer: product.developers) {
+                                if (developerService.findByName(developer).isEmpty()) {
+                                    Developer savedDeveloper = developerService.create(new CreateDeveloperRequest(developer));
+                                    developers.add(savedDeveloper);
+                                } else {
+                                    developerService.findByName(developer).ifPresent(developers::add);
+                                }
+                            }
+
+                            game.setDevelopers(developers);
+
+                            Set<Publisher> publishers = new HashSet<>();
+                            for (String publisher: product.publishers) {
+                                if (publisherService.findByName(publisher).isEmpty()) {
+                                    Publisher savedPublisher = publisherService.create(new CreatePublisherRequest(publisher));
+                                    publishers.add(savedPublisher);
+                                } else {
+                                    publisherService.findByName(publisher).ifPresent(publishers::add);
+                                }
+                            }
+
+                            game.setPublishers(publishers);
+
+                            Set<Feature> features = new HashSet<>();
+                            for (ProductResponse.Feature feature: product.tags.features) {
+                                if (featureService.findByName(feature.name).isEmpty()) {
+                                    Feature savedFeature = featureService.create(new CreateFeatureRequest(feature.name));
+                                    features.add(savedFeature);
+                                } else {
+                                    featureService.findByName(feature.name).ifPresent(features::add);
+                                }
+                            }
+
+                            game.setFeatures(features);
+
+                            Set<Genre> genres = new HashSet<>();
+                            for (ProductResponse.Genre genre: product.tags.genres) {
+                                if (genreService.findByName(genre.name).isEmpty()) {
+                                    Genre savedGenre = genreService.create(new CreateGenreRequest(genre.name));
+                                    genres.add(savedGenre);
+                                } else {
+                                    genreService.findByName(genre.name).ifPresent(genres::add);
+                                }
+                            }
+
+                            game.setGenres(genres);
+
+                            Set<Platform> platforms = new HashSet<>();
+                            for (ProductResponse.Platform platform: product.tags.platforms) {
+                                if (platformService.findByName(platform.name).isEmpty()) {
+                                    Platform savedPlatform = platformService.create(new CreatePlatformRequest(platform.name));
+                                    platforms.add(savedPlatform);
+                                } else {
+                                    platformService.findByName(platform.name).ifPresent(platforms::add);
+                                }
+                            }
+
+                            game.setPlatforms(platforms);
+
+                            ProductConfigurationResponse productConfiguration = epicClient.getProductConfiguration(store.namespace);
+
+                            Set<Language> audioLanguages = new HashSet<>();
+                            for (Object audioLanguage: productConfiguration.data.product.sandbox.configuration.get(0).configs.supportedAudio) {
+                                if (languageService.findByName((String) audioLanguage).isEmpty()) {
+                                    Language savedLanguage = languageService.saveLanguage((String) audioLanguage);
+                                    audioLanguages.add(savedLanguage);
+                                } else {
+                                    languageService.findByName((String) audioLanguage).ifPresent(audioLanguages::add);
+                                }
+                            }
+
+                            game.setAudioLanguages(audioLanguages);
+
+                            Set<Language> subtitleLanguages = new HashSet<>();
+                            for (String audioLanguage: productConfiguration.data.product.sandbox.configuration.get(0).configs.supportedText) {
+                                if (languageService.findByName(audioLanguage).isEmpty()) {
+                                    Language savedLanguage = languageService.saveLanguage(audioLanguage);
+                                    subtitleLanguages.add(savedLanguage);
+                                } else {
+                                    languageService.findByName(audioLanguage).ifPresent(subtitleLanguages::add);
+                                }
+                            }
+
+                            game.setSubtitleLanguages(subtitleLanguages);
+
+                            if (productConfiguration.data.product.sandbox.configuration.get(0).configs.technicalRequirements.windows != null) {
+                                 game.setMinSystemRequirement(systemRequirementService.extractMinSystemRequirementsEpic(productConfiguration.data.product.sandbox.configuration.get(0).configs.technicalRequirements.windows));
+                                 game.setRecommendedSystemRequirement(systemRequirementService.extractRecommendedSystemRequirementsEpic(productConfiguration.data.product.sandbox.configuration.get(0).configs.technicalRequirements.windows));
+                            }
+
+                            Description productDescription = epicClient.getProductDescription(catalogOffer.data.catalog.catalogOffer.namespace);
+
+                            log.info("Description : " + productDescription.data.product.sandbox.configuration.get(1).configs.longDescription);
+
+                            if (productDescription.data.product.sandbox.configuration.get(1).configs.longDescription != null) {
+                                game.setDescription(productDescription.data.product.sandbox.configuration.get(1).configs.longDescription);
+                            }
+
+                            Game savedGame = gameRepository.save(game);
+
+                            // TODO: fix price issue
+
+                            Store gameStore = Store
+                                    .builder()
+                                    .game(savedGame)
+                                    .currency(Currency.valueOf(catalogOffer.data.catalog.catalogOffer.price.totalPrice.currencyCode.toUpperCase(Locale.ROOT)))
+                                    .storeName(StoreType.EPIC)
+                                    .finalPrice((float) (catalogOffer.data.catalog.catalogOffer.price.totalPrice.originalPrice/100.0f))
+                                    .url("https://store.epicgames.com/en-US/p/" + store.offerMappings.get(0).pageSlug)
+                                    .build();
+                            storeRepository.save(gameStore);
+
+                            log.info("Store saved");
+                            Thread.sleep(1000);
+                        }
+
+                    }
+                }
+            }
+            System.out.println("****");
+            System.out.println("total: " + storeList1.data.catalog.searchStore.paging.total);
+            total += 40;
         }
     }
 

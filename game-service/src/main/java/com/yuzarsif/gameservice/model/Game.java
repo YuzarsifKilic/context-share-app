@@ -74,6 +74,10 @@ public class Game {
     @JoinColumn(name = "min_system_requirement_id")
     private SystemRequirement minSystemRequirement;
 
+    @ManyToOne
+    @JoinColumn(name = "recommended_system_requirement_id")
+    private SystemRequirement recommendedSystemRequirement;
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.REMOVE)
     private Set<Store> stores;
 

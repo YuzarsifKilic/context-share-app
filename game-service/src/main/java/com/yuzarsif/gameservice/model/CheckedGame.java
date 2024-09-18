@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class CheckedGame {
 
     @Id
-    private Long gameId;
+    private String gameId;
     private String platform;
     private Boolean nameEmpty;
     private Boolean priceEmpty;

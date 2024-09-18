@@ -1,9 +1,11 @@
 package com.yuzarsif.gameservice.service;
 
+import com.yuzarsif.gameservice.client.epic.response.ProductConfigurationResponse;
 import com.yuzarsif.gameservice.dto.request.CreateSystemRequirementRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
 import com.yuzarsif.gameservice.model.*;
 import com.yuzarsif.gameservice.repository.SystemRequirementRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -11,19 +13,15 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class SystemRequirementService {
 
     private final SystemRequirementRepository systemRequirementRepository;
     private final OsService osService;
     private final ProcessorService processorService;
     private final GraphicsService graphicsService;
-
-    public SystemRequirementService(SystemRequirementRepository systemRequirementRepository, OsService osService, ProcessorService processorService, GraphicsService graphicsService) {
-        this.systemRequirementRepository = systemRequirementRepository;
-        this.osService = osService;
-        this.processorService = processorService;
-        this.graphicsService = graphicsService;
-    }
+    private final MemoryService memoryService;
+    private final StorageService storageService;
 
     public SystemRequirement findById(Long id) {
         return systemRequirementRepository
@@ -36,13 +34,15 @@ public class SystemRequirementService {
         Set<Processor> processor = processorService.findByIdList(request.processorIdList());
         Set<Graphics> graphicsList = graphicsService.findByIdList(request.graphicsIdList());
 
+        // TODO: find memory and storage
+
         SystemRequirement systemRequirement = SystemRequirement
                 .builder()
-                .memory(request.memory())
+                //.memory(request.memory())
                 .os(os)
                 .processors(processor)
                 .graphics(graphicsList)
-                .storage(request.storage())
+                //.storage(request.storage())
                 .build();
 
         systemRequirementRepository.save(systemRequirement);
@@ -103,6 +103,8 @@ public class SystemRequirementService {
         checkedGame.setStorageEmpty(true);
         checkedGame.setMemoryEmpty(true);
 
+        //TODO: find memory and storage
+
         if (os != null) {
             systemRequirement.setOs(os);
             checkedGame.setOsEmpty(false);
@@ -117,11 +119,11 @@ public class SystemRequirementService {
             checkedGame.setGraphicsEmpty(false);
         }
         if (storage != 0) {
-            systemRequirement.setStorage(storage);
+            //systemRequirement.setStorage(storage);
             checkedGame.setStorageEmpty(false);
         }
         if (memory != 0) {
-            systemRequirement.setMemory(memory);
+            //systemRequirement.setMemory(memory);
             checkedGame.setMemoryEmpty(false);
         }
 
@@ -136,5 +138,81 @@ public class SystemRequirementService {
         return input;
     }
 
+    public SystemRequirement extractMinSystemRequirementsEpic(ArrayList<ProductConfigurationResponse.Window> windows) {
+        Os os = null;
+        Set<Processor> processors = new HashSet<>();
+        Set<Graphics> graphics = new HashSet<>();
+        Memory memory = null;
+        Storage storage = null;
+
+        for (ProductConfigurationResponse.Window window: windows) {
+            if (window.title.equals("OS version") && window.minimum != null) {
+                os = osService.getOs(window.minimum);
+            } if (window.title.equals("CPU") && window.minimum != null) {
+                processors = processorService.extractProcessorForEpicGames(window.minimum);
+            } if (window.title.equals("GPU") && window.minimum != null) {
+                graphics = graphicsService.extractGraphicsForEpicGames(window.minimum);
+            } if (window.title.equals("Memory") && window.minimum != null) {
+                if (memoryService.clearData(window.minimum) != null) {
+                    memory = memoryService.clearData(window.minimum);
+                }
+            } if (window.title.equals("Storage") && window.minimum != null) {
+                if (storageService.clearData(window.minimum) != null) {
+                    storage = storageService.clearData(window.minimum);
+                }
+            }
+        }
+        SystemRequirement systemRequirement = new SystemRequirement();
+        systemRequirement.setOs(os);
+        systemRequirement.setProcessors(processors);
+        systemRequirement.setGraphics(graphics);
+        systemRequirement.setStorage(storage);
+        systemRequirement.setMemory(memory);
+        return systemRequirementRepository.save(systemRequirement);
+    }
+
+    public SystemRequirement extractRecommendedSystemRequirementsEpic(ArrayList<ProductConfigurationResponse.Window> windows) {
+        Os os = null;
+        Set<Processor> processors = new HashSet<>();
+        Set<Graphics> graphics = new HashSet<>();
+        Memory memory = null;
+        Storage storage = null;
+
+        for (ProductConfigurationResponse.Window window: windows) {
+            if (window.title.equals("OS version") && window.recommended != null) {
+                os = osService.getOs(window.recommended);
+            } if (window.title.equals("CPU") && window.recommended != null) {
+                processors = processorService.extractProcessorForEpicGames(window.recommended);
+            } if (window.title.equals("GPU") && window.recommended != null) {
+                graphics = graphicsService.extractGraphicsForEpicGames(window.recommended);
+            } if (window.title.equals("Memory") && window.recommended != null) {
+                if (memoryService.clearData(window.recommended) != null) {
+                    memory = memoryService.clearData(window.recommended);
+                }
+            } if (window.title.equals("Storage") && window.recommended != null) {
+                if (storageService.clearData(window.recommended) != null) {
+                    storage = storageService.clearData(window.recommended);
+                }
+            }
+        }
+        SystemRequirement systemRequirement = new SystemRequirement();
+        if (os != null) {
+            systemRequirement.setOs(os);
+        }
+        if (!processors.isEmpty()) {
+            systemRequirement.setProcessors(processors);
+        }
+        if (!graphics.isEmpty()) {
+            systemRequirement.setGraphics(graphics);
+        }
+        if (storage != null) {
+            systemRequirement.setStorage(storage);
+        }
+        if (memory != null) {
+            systemRequirement.setMemory(memory);
+        }
+        return systemRequirementRepository.save(systemRequirement);
+
+    }
 
 }

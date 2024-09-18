@@ -108,20 +108,23 @@ public class ProcessorService {
     }
 
     private Boolean checkProcessorBrandValid(String processor) {
+        processor = processor.substring(0, processor.indexOf(" "));
         List<String> brands = Arrays.asList("Intel", "AMD", "Intel(R)", "AMD(R)", "Radeon", "Radeon(R)", "NVIDIA", "NVIDIA(R)", "Intel®", "INTEL®");
         return brands.contains(processor);
     }
 
-    private List<Processor> extractProcessors(String[] processors) {
+    protected List<Processor> extractProcessors(String[] processors) {
         List<Processor> processorList = new ArrayList<>();
         String firstProcessor = processors[0];
         if (firstProcessor.startsWith(" ")) {
             firstProcessor = firstProcessor.replaceFirst(" ", "");
         }
         if (!firstProcessor.contains(" ")) {
+            log.info("Processor: " + firstProcessor);
             processorList.add(this.ifProcessorExistsGetProcessorOrCreate(new CreateProcessorRequest(null, null, firstProcessor)));
         } else {
             if (this.checkProcessorBrandValid(firstProcessor)) {
+                log.info("Processor: " + firstProcessor);
                 if (firstProcessor.contains(" ")) {
                     String firstProcessorBrand = firstProcessor.substring(0, firstProcessor.indexOf(" "));
                     String firstProcessorVersion = firstProcessor.substring(firstProcessor.indexOf(" ")+1);
@@ -155,7 +158,34 @@ public class ProcessorService {
         return processorList;
     }
 
-    private Processor ifProcessorExistsGetProcessorOrCreate(CreateProcessorRequest request) {
+    protected Set<Processor> extractProcessorForEpicGames(String processor) {
+        Set<Processor> processorList = new HashSet<>();
+        if (processor.contains("/")) {
+            String[] processors = processor.split("/", 2);
+            log.info("/" + Arrays.toString(processors));
+            processorList = new HashSet<>(extractProcessors(processors).stream().toList());
+        } else if (processor.contains(";")) {
+            String[] processors = processor.split(";", 2);
+            log.info(";" + Arrays.toString(processors));
+            processorList = new HashSet<>(extractProcessors(processors).stream().toList());
+        } else if (processor.contains(" or ")) {
+            String[] processors = processor.split(" or ", 2);
+            log.info(" or " + Arrays.toString(processors));
+            processorList = new HashSet<>(extractProcessors(processors));
+        } else if (processor.contains(" ")) {
+            String[] processors = processor.split(" ", 2);
+            log.info(" " + Arrays.toString(processors));
+            String brand = processors[0];
+            String version = processors[1];
+            processorList.add(this.ifProcessorExistsGetProcessorOrCreate(new CreateProcessorRequest(brand, version, null)));
+        } else {
+            processorList.add(this.ifProcessorExistsGetProcessorOrCreate(new CreateProcessorRequest(null, null, processor)));
+        }
+
+        return processorList;
+    }
+
+    protected Processor ifProcessorExistsGetProcessorOrCreate(CreateProcessorRequest request) {
         if (request.brand() == null && request.version() == null && request.description() == null) {
             return null;
         }

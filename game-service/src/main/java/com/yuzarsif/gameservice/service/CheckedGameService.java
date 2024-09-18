@@ -13,7 +13,7 @@ public class CheckedGameService {
 
     private final CheckedGameRepository checkedGameRepository;
 
-    public Boolean existsByGameId(Long gameId) {
+    public Boolean existsByGameId(String gameId) {
         return checkedGameRepository.existsByGameId(gameId);
     }
 

@@ -119,12 +119,21 @@ public class OsService {
                     return this.ifOsExistsGetOsOrCreate(new CreateOsRequest(brand, version, null));
                 }
             }
+        } else if (!os.contains("OS")) {
+            if (!os.contains(" ")) {
+                return this.ifOsExistsGetOsOrCreate(new CreateOsRequest(null, null, os));
+            } else {
+                String[] clearedOs = os.split(" ", 2);
+                String brand = clearedOs[0];
+                String version = clearedOs[1];
+                return this.ifOsExistsGetOsOrCreate(new CreateOsRequest(brand, version, null));
+            }
         }
         log.error("OS is not good for us: " + os);
         return null;
     }
 
-    private Os ifOsExistsGetOsOrCreate(CreateOsRequest request) {
+    protected Os ifOsExistsGetOsOrCreate(CreateOsRequest request) {
         Optional<Os> optionalOs = osRepository.findByBrandAndVersionAndDescription(request.brand(), request.version(), request.description());
         return optionalOs.orElseGet(() -> osRepository.save(Os
                 .builder()

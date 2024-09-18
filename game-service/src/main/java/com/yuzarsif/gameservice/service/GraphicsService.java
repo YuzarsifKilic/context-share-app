@@ -8,10 +8,7 @@ import com.yuzarsif.gameservice.repository.GraphicsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -146,13 +143,36 @@ public class GraphicsService {
     }
 
     private Boolean checkIsGraphicsBrandValid(String graphics) {
-        List<String> validBrands = Arrays.asList("NVDIA", "AMD", "OPENGL", "Intel", "NVidia", "Radeon", "Radeon(R)", "Nvidia", "NVIDIA®", "NVIDIA(R)", "AMD(R)", "Intel(R)", "NVIDA");
+        graphics = graphics.substring(0, graphics.indexOf(" "));
+        List<String> validBrands = Arrays.asList("NVIDIA", "AMD", "OPENGL", "Intel", "NVidia", "Radeon", "Radeon(R)", "Nvidia", "NVIDIA®", "NVIDIA(R)", "AMD(R)", "Intel(R)", "NVIDA");
         return validBrands.contains(graphics);
+    }
+
+    public Set<Graphics> extractGraphicsForEpicGames(String graphics) {
+        Set<Graphics> graphicsList = new HashSet<>();
+        if (graphics.contains("/")) {
+            String[] split = graphics.split("/", 2);
+            graphicsList = new HashSet<>(extractGraphics(split).stream().toList());
+            return graphicsList;
+        } else if (graphics.contains(" or ")) {
+            String[] split = graphics.split(" or ", 2);
+            graphicsList = new HashSet<>(extractGraphics(split));
+            return graphicsList;
+        } else if (graphics.contains(" ")) {
+            String[] split = graphics.split(" ", 2);
+            String brand = split[0];
+            String version = split[1];
+            graphicsList.add(this.ifGraphicsExistsGetGraphicsOrCreate(new CreateGraphicsRequest(brand, version, null)));
+            return graphicsList;
+        } else {
+            graphicsList.add(this.ifGraphicsExistsGetGraphicsOrCreate(new CreateGraphicsRequest(null, null, graphics)));
+            return graphicsList;
+        }
     }
 
     
 
-    private Graphics ifGraphicsExistsGetGraphicsOrCreate(CreateGraphicsRequest request) {
+    protected Graphics ifGraphicsExistsGetGraphicsOrCreate(CreateGraphicsRequest request) {
         return graphicsRepository
                 .findByBrandAndVersionAndDescription(request.brand(), request.version(), request.description())
                 .orElseGet(() -> graphicsRepository

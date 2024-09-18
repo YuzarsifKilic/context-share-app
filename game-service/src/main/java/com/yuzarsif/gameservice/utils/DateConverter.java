@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
@@ -19,6 +20,12 @@ public class DateConverter {
         } catch (ParseException e) {
             throw new DateFormatterException("Date format is not valid: " + date);
         }
+    }
+
+    public static Date epicDateToJavaDate(String date) {
+        Instant instant = Instant.parse(date);
+
+        return Date.from(instant);
     }
 
     public static Date steamDateToJavaDate(String date) {

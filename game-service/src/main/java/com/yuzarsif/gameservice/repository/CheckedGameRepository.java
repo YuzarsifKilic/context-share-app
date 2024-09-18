@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface CheckedGameRepository extends MongoRepository<CheckedGame, Long> {
 
-    Boolean existsByGameId(Long gameId);
+    Boolean existsByGameId(String gameId);
 }

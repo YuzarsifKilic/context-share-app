@@ -25,14 +25,20 @@ public class SystemRequirement {
     @JoinColumn(name = "os_id")
     private Os os;
 
+    @ManyToOne
+    @JoinColumn(name = "memory_id")
+    private Memory memory;
+
+    @ManyToOne
+    @JoinColumn(name = "storage_id")
+    private Storage storage;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "system_requirement_processors",
             joinColumns = @JoinColumn(name = "system_requirement_id"),
             inverseJoinColumns = @JoinColumn(name = "processor_id"))
     private Set<Processor> processors;
 
-    private Integer memory;
-    private Integer storage;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "system_requirement_graphics",
@@ -41,27 +47,28 @@ public class SystemRequirement {
     private Set<Graphics> graphics;
 
     @OneToMany(mappedBy = "minSystemRequirement")
-    private Set<Game> games;
+    private Set<Game> minSystemRequirementGames;
+
+    @OneToMany(mappedBy = "recommendedSystemRequirement")
+    private Set<Game> recommendedRequirementGames;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SystemRequirement that = (SystemRequirement) o;
-        return Objects.equals(id, that.id) && Objects.equals(memory, that.memory) && Objects.equals(storage, that.storage);
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, memory, storage);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "SystemRequirement{" +
                 "id=" + id +
-                ", memory=" + memory +
-                ", storage=" + storage +
                 '}';
     }
 }
