@@ -8,6 +8,8 @@ spring:
     mongodb:
       uri: ${MONGODB_URL}
       database: context_share
+  flyway:
+    baseline-on-migrate: true
 
 server:
   port: 8080

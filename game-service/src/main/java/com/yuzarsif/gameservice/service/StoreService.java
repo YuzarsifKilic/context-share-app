@@ -3,10 +3,7 @@ package com.yuzarsif.gameservice.service;
 import com.yuzarsif.gameservice.dto.request.CreateDiscountRequest;
 import com.yuzarsif.gameservice.dto.request.CreateStoreRequest;
 import com.yuzarsif.gameservice.exception.EntityNotFoundException;
-import com.yuzarsif.gameservice.model.Currency;
-import com.yuzarsif.gameservice.model.Game;
-import com.yuzarsif.gameservice.model.Platform;
-import com.yuzarsif.gameservice.model.Store;
+import com.yuzarsif.gameservice.model.*;
 import com.yuzarsif.gameservice.repository.StoreRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import com.yuzarsif.gameservice.utils.TimeConverter;
@@ -29,14 +26,12 @@ public class StoreService {
 
     public void createStore(CreateStoreRequest createStoreRequest) {
         Game game = gameService.findById(createStoreRequest.gameId());
-        Platform platform = platformService.findById(createStoreRequest.platformId());
 
         Store store = Store
                 .builder()
                 .storeName(createStoreRequest.storeName())
                 .price(createStoreRequest.price())
                 .game(game)
-                .platform(platform)
                 .url(createStoreRequest.url())
                 .currency(Currency.valueOf(createStoreRequest.currency().toUpperCase()))
                 .build();
@@ -58,6 +53,10 @@ public class StoreService {
         store.setDiscountEndTime(TimeConverter.convert(createDiscountRequest.discountEndTime()));
 
         storeRepository.save(store);
+    }
+
+    public Boolean checkStore(String name, StoreType storeType) {
+        return storeRepository.existsByGame_NameAndStoreName(name, storeType);
     }
 
 }

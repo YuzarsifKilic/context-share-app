@@ -37,6 +37,7 @@ public class LanguageService {
     }
 
     public Set<Language> extractAudioLanguageList(String languages, CheckedGame checkedGame) {
+        log.info("languages: " + languages);
         if (languages.contains("<br><strong>*</strong>languages with full audio support")) {
             languages = languages.replace("<br><strong>*</strong>languages with full audio support", "");
         }
@@ -49,16 +50,16 @@ public class LanguageService {
                     language = language.replaceFirst(" ", "");
                 }
                 languageList.add(ifLanguageExistsGetLanguageOrCreate(language));
+            } else {
+                languageList.add(ifLanguageExistsGetLanguageOrCreate(language));
             }
-        }
-        if (languageList.isEmpty()) {
-            checkedGame.setAudioLanguageEmpty(true);
         }
         log.info("audio language list: " + languageList);
         return languageList.stream().collect(Collectors.toSet());
     }
 
     public Set<Language> extractSubtitleLanguageList(String languages, CheckedGame checkedGame) {
+        log.info("languages: " + languages);
         if (languages.contains("<br><strong>*</strong>languages with full audio support")) {
             languages = languages.replace("<br><strong>*</strong>languages with full audio support", "");
         }
@@ -67,10 +68,13 @@ public class LanguageService {
         for (String language : languageArray) {
             if (!language.contains("<strong>*</strong>")) {
                 languageList.add(ifLanguageExistsGetLanguageOrCreate(language));
+            } else {
+                language = language.replace("<strong>*</strong>", "");
+                if (language.startsWith(" ")) {
+                    language = language.replaceFirst(" ", "");
+                }
+                languageList.add(ifLanguageExistsGetLanguageOrCreate(language));
             }
-        }
-        if (languageList.isEmpty()) {
-            checkedGame.setSubtitleLanguageEmpty(true);
         }
         log.info("subtitle language list: " + languageList);
         return languageList.stream().collect(Collectors.toSet());

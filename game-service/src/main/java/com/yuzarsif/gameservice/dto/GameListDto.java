@@ -1,6 +1,7 @@
 package com.yuzarsif.gameservice.dto;
 
 import com.yuzarsif.gameservice.model.Game;
+import com.yuzarsif.gameservice.model.Photo;
 
 import java.util.List;
 

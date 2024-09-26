@@ -34,9 +34,6 @@ public class Store {
     private LocalTime discountEndTime;
     private String url;
     @ManyToOne
-    @JoinColumn(name = "platform_id")
-    private Platform platform;
-    @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
 

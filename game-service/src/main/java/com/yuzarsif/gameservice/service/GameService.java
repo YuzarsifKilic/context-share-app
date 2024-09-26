@@ -66,7 +66,7 @@ public class GameService {
                 .name(createGameRequest.name())
                 .releaseDate(DateConverter.convert(createGameRequest.releaseDate()))
                 .description(createGameRequest.description())
-                .mainImage(createGameRequest.mainImage())
+                //.mainImage(createGameRequest.mainImage())
                 .developers(developers)
                 .audioLanguages(audioLanguages)
                 .subtitleLanguages(subtitleLanguages)
@@ -83,24 +83,22 @@ public class GameService {
     public PageResponse<GameListDto> findAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Game> games = gameRepository.findAll(pageable);
         long startTime = System.currentTimeMillis();
-        List<GameListDto> gameResponse = gameRepository.findAll(pageable)
-                .stream()
-                .map(GameListDto::convert)
-                .toList();
+
+        Page<GameListDto> allGames = gameRepository.findAllGames(pageable);
+
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
 
         System.out.println("Execution time: " + duration + " milliseconds");
         return new PageResponse<>(
-                gameResponse,
-                games.getNumber(),
-                games.getSize(),
-                games.getTotalElements(),
-                games.getTotalPages(),
-                games.isFirst(),
-                games.isLast());
+                allGames.toList(),
+                allGames.getNumber(),
+                allGames.getSize(),
+                allGames.getTotalElements(),
+                allGames.getTotalPages(),
+                allGames.isFirst(),
+                allGames.isLast());
     }
 
     public PageResponse<GameDto> findByNameContaining(String name, Integer page, Integer size) {
@@ -158,5 +156,14 @@ public class GameService {
 
     public GameListDto getGameInfo(Long id) {
         return GameListDto.convert(findById(id));
+    }
+
+    public void addComment(Long id) {
+        Game game = gameRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Game not found with id " + id));
+
+        Integer commentCount = game.getCommentCount();
+        game.setCommentCount(commentCount + 1);
+        gameRepository.save(game);
     }
 }

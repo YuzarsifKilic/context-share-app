@@ -7,7 +7,6 @@ public record CreateStoreRequest(
         Float price,
         String currency,
         String url,
-        Long gameId,
-        Long platformId
+        Long gameId
 ) {
 }

@@ -58,6 +58,8 @@ public class ProcessorService {
 
         String[] processors = new String[2];
 
+        //TODO: extract processor add try catch block when get an error print a log
+
         processor = processor.substring(11);
         if (processor.isEmpty()) {
             return processorList;
@@ -108,8 +110,11 @@ public class ProcessorService {
     }
 
     private Boolean checkProcessorBrandValid(String processor) {
-        processor = processor.substring(0, processor.indexOf(" "));
         List<String> brands = Arrays.asList("Intel", "AMD", "Intel(R)", "AMD(R)", "Radeon", "Radeon(R)", "NVIDIA", "NVIDIA(R)", "Intel®", "INTEL®");
+        if (processor.contains(" ")) {
+            processor = processor.substring(0, processor.indexOf(" "));
+            return brands.contains(processor);
+        }
         return brands.contains(processor);
     }
 

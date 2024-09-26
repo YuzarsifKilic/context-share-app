@@ -48,13 +48,13 @@ public class SystemRequirementService {
         systemRequirementRepository.save(systemRequirement);
     }
 
-    public SystemRequirement extractSystemRequirements(String systemRequirements, CheckedGame checkedGame) {
+    public SystemRequirement extractSystemRequirements(String systemRequirements) {
         List<String> requirements = Arrays.stream(systemRequirements.split("<li>")).toList();
         Os os = null;
         Set<Processor> processors = new HashSet<>();
         Set<Graphics> graphics = new HashSet<>();
-        Integer memory = 0;
-        Integer storage = 0;
+        Memory memory = null;
+        Storage storage = null;
 
         for (String requirement: requirements) {
             String clearedRequirement = clearData(requirement);
@@ -66,25 +66,10 @@ public class SystemRequirementService {
                 graphics = new HashSet<>(graphicsService.getGraphics(clearedRequirement));
             } if (clearedRequirement.startsWith("Storage:")) {
                 clearedRequirement = clearedRequirement.substring(9);
-                clearedRequirement = clearedRequirement.replace("MB", " ");
-                clearedRequirement = clearedRequirement.replace("GB", " ");
-                clearedRequirement = clearedRequirement.substring(0, clearedRequirement.indexOf(" "));
-                try {
-                    storage = (int) Float.parseFloat(clearedRequirement);
-                } catch (NumberFormatException e) {
-                    storage = 0;
-                }
+                storage = storageService.clearData(clearedRequirement);
             } if (clearedRequirement.startsWith("Memory:")) {
                 clearedRequirement = clearedRequirement.substring(8);
-                clearedRequirement = clearedRequirement.replace("MB", " ");
-                clearedRequirement = clearedRequirement.replace("GB", " ");
-                clearedRequirement = clearedRequirement.substring(0, clearedRequirement.indexOf(" "));
-                try {
-                    memory = (int) Float.parseFloat(clearedRequirement);
-                } catch (NumberFormatException e) {
-                    memory = 0;
-                }
-
+                memory = memoryService.clearData(clearedRequirement);
             }
         }
 
@@ -97,34 +82,23 @@ public class SystemRequirementService {
 //        systemRequirement.setStorage(null);
 //        systemRequirement.setMemory(null);
 
-        checkedGame.setOsEmpty(true);
-        checkedGame.setProcessorEmpty(true);
-        checkedGame.setGraphicsEmpty(true);
-        checkedGame.setStorageEmpty(true);
-        checkedGame.setMemoryEmpty(true);
-
         //TODO: find memory and storage
 
         if (os != null) {
             systemRequirement.setOs(os);
-            checkedGame.setOsEmpty(false);
         }
         if (!processors.isEmpty()) {
             log.info(processors.toString());
             systemRequirement.setProcessors(processors);
-            checkedGame.setProcessorEmpty(false);
         }
         if (!graphics.isEmpty()) {
             systemRequirement.setGraphics(graphics);
-            checkedGame.setGraphicsEmpty(false);
         }
-        if (storage != 0) {
-            //systemRequirement.setStorage(storage);
-            checkedGame.setStorageEmpty(false);
+        if (storage != null) {
+            systemRequirement.setStorage(storage);
         }
-        if (memory != 0) {
-            //systemRequirement.setMemory(memory);
-            checkedGame.setMemoryEmpty(false);
+        if (memory != null) {
+            systemRequirement.setMemory(memory);
         }
 
         return systemRequirementRepository.save(systemRequirement);

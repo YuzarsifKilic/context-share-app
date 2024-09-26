@@ -56,6 +56,8 @@ public class GraphicsService {
         log.info("Graphics: " + graphics);
         List<Graphics> graphicsList = new ArrayList<>();
 
+        //TODO: extract graphics add try catch block when get an error print a log
+
         graphics = graphics.substring(10);
         if (graphics.isEmpty() || graphics.length() > 60) {
             return graphicsList;

@@ -19,6 +19,7 @@ public record GameDto(
     List<LanguageDto> audioLanguages,
     List<LanguageDto> subtitleLanguages,
     SystemRequirementDto minSystemRequirement,
+    SystemRequirementDto recommendedSystemRequirement,
     List<StoreDto> stores
 ) {
 
@@ -28,14 +29,16 @@ public record GameDto(
                 from.getName(),
                 from.getDescription(),
                 from.getReleaseDate().toString(),
-                from.getMainImage(),
+                null,
+                //from.getMainImage(),
                 DeveloperDto.convertList(from.getDevelopers()),
                 GenreDto.convertList(from.getGenres()),
                 FeatureDto.convertList(from.getFeatures()),
-                PlatformDto.convertList(from.getPlatforms()),
+                from.getPlatforms() == null ? null : PlatformDto.convertList(from.getPlatforms()),
                 LanguageDto.convertList(from.getAudioLanguages()),
                 LanguageDto.convertList(from.getSubtitleLanguages()),
                 SystemRequirementDto.convert(from.getMinSystemRequirement()),
+                SystemRequirementDto.convert(from.getRecommendedSystemRequirement()),
                 StoreDto.convertList(from.getStores()));
     }
 }

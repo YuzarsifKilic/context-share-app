@@ -457,7 +457,7 @@ public class EpicClient {
     }
 
     public ProductResponse getProduct(String sandboxId) {
-        String url = "https://egs-platform-service.store.epicgames.com/api/v1/egs/products/" + sandboxId + "?country=TR&locale=en-US&store=EGS";
+        String url = "https://egs-platform-service.store.epicgames.com/api/v1/egs/products/" + sandboxId + "?country=US&locale=en-US&store=EGS";
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -485,5 +485,185 @@ public class EpicClient {
         }
     }
 
+    public ProductHomeConfig getProductHomeConfig(String sandboxId) {
+        String url = "https://store.epicgames.com/graphql";
+
+        String query = """
+          query getProductHomeConfig($locale: String!, $sandboxId: String!) {
+            Product {
+              sandbox(sandboxId: $sandboxId) {
+                configuration(locale: $locale) {
+                  ... on HomeConfiguration {
+                    configs {
+                      keyImages {
+                        ... on KeyImage {
+                          type
+                          url
+                          alt
+                        }
+                        ... on Video {
+                          type
+                          url
+                          alt
+                        }
+                      }
+                      longDescription
+                    }
+                  }
+                }
+              }
+            }
+          }
+          """;
+
+        // Değişkenleri oluştur
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("sandboxId", sandboxId);
+        variables.put("locale", "en");
+        // İstek gövdesi
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("query", query);
+        requestBody.put("variables", variables);
+
+        // Başlıklar
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.set("User-Agent", "RestTemplateClient");
+
+        // HttpEntity oluştur
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            // GraphQL isteğini gönder
+            ResponseEntity<ProductHomeConfig> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    ProductHomeConfig.class
+            );
+
+            // Başarılı durum kontrolü
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            } else {
+                System.out.println("İstek başarısız oldu. Durum kodu: " + response.getStatusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public VideoByIdResponse getVideoById(String videoId) {
+        String url = "https://store.epicgames.com/graphql";
+
+        String query = """
+                query getVideoById($videoId: String!, $locale: String!) {
+                  Video {
+                    fetchVideoByLocale(videoId: $videoId, locale: $locale) {
+                      recipe
+                      mediaRefId
+                    }
+                  }
+                }
+                """;
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("videoId", videoId);
+        variables.put("locale", "en");
+        // İstek gövdesi
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("query", query);
+        requestBody.put("variables", variables);
+
+        // Başlıklar
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.set("User-Agent", "RestTemplateClient");
+
+        // HttpEntity oluştur
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            // GraphQL isteğini gönder
+            ResponseEntity<VideoByIdResponse> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    VideoByIdResponse.class
+            );
+
+            // Başarılı durum kontrolü
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            } else {
+                System.out.println("İstek başarısız oldu. Durum kodu: " + response.getStatusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public GetVideoResponse getVideo(String mediaRefId) {
+        String url = "https://store.epicgames.com/graphql";
+
+        String query = """
+                query getVideo($mediaRefId: String!) {
+                  Media {
+                    getMediaRef(mediaRefId: $mediaRefId) {
+                      accountId
+                      outputs {
+                        duration
+                        url
+                        width
+                        height
+                        key
+                        contentType
+                      }
+                      namespace
+                    }
+                  }
+                }
+                """;
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mediaRefId", mediaRefId);
+        // İstek gövdesi
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("query", query);
+        requestBody.put("variables", variables);
+
+        // Başlıklar
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.set("User-Agent", "RestTemplateClient");
+
+        // HttpEntity oluştur
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            // GraphQL isteğini gönder
+            ResponseEntity<GetVideoResponse> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    GetVideoResponse.class
+            );
+
+            // Başarılı durum kontrolü
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            } else {
+                System.out.println("İstek başarısız oldu. Durum kodu: " + response.getStatusCode());
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 }

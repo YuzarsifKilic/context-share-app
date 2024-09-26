@@ -62,4 +62,10 @@ public class GameController {
     public ResponseEntity<GameListDto> getGameInfo(@PathVariable Long id) {
         return ResponseEntity.ok(gameService.getGameInfo(id));
     }
+
+    @PostMapping("/add-comment/{id}")
+    public ResponseEntity<String> addComment(@PathVariable Long id) {
+        gameService.addComment(id);
+        return ResponseEntity.ok("Added comment");
+    }
 }

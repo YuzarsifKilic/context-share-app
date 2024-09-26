@@ -1,13 +1,13 @@
 services:
   game-db:
     container_name: game-db
-    image: mysql
+    image: mysql:8.0
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: yuzarsif
       MYSQL_DATABASE: game-db
     volumes:
-      - game-db-data:/var/lib/mysql
+      - game-db-datav2:/var/lib/mysql
     ports:
       - 3307:3306
     networks:
@@ -126,7 +126,7 @@ networks:
     driver: bridge
 
 volumes:
-  game-db-data:
+  game-db-datav2:
   movie-db-data:
   series-db-data:
   mongo:

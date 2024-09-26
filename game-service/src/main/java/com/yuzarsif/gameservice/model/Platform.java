@@ -22,14 +22,11 @@ public class Platform {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinTable(name = "game_platform",
             joinColumns = @JoinColumn(name = "platform_id"),
             inverseJoinColumns = @JoinColumn(name = "game_id"))
     private Set<Game> games;
-
-    @OneToMany(mappedBy = "platform")
-    private Set<Store> stores;
 
     @Override
     public boolean equals(Object o) {
