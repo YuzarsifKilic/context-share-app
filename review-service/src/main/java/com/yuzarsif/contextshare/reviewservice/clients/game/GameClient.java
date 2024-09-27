@@ -52,4 +52,18 @@ public class GameClient {
                 GameListDto.class);
         return response.getBody();
     }
+
+    public void addComment(Long id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        restTemplate.setErrorHandler(new CustomErrorHandler());
+        ResponseEntity<String> response = restTemplate.exchange(
+                gameServiceUrl + "/api/v1/games/add-comment/" + id,
+                HttpMethod.POST,
+                requestEntity,
+                String.class);
+    }
 }

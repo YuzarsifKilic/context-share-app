@@ -22,7 +22,7 @@ public class Platform {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinTable(name = "game_platform",
             joinColumns = @JoinColumn(name = "platform_id"),
             inverseJoinColumns = @JoinColumn(name = "game_id"))

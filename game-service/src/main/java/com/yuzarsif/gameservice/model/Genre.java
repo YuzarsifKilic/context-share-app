@@ -22,7 +22,7 @@ public class Genre {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "game_genre",
             joinColumns = @JoinColumn(name = "genre_id"),
             inverseJoinColumns = @JoinColumn(name = "game_id"))

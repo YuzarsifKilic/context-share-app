@@ -10,3 +10,9 @@ spring:
     properties:
       dialect: org.hibernate.dialect.MySQLDialect
 
+logging:
+  level:
+    org:
+      springframework:
+        retry: INFO
+

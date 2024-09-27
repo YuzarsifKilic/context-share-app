@@ -36,7 +36,7 @@ public class LanguageService {
                 .collect(Collectors.toSet());
     }
 
-    public Set<Language> extractAudioLanguageList(String languages, CheckedGame checkedGame) {
+    public Set<Language> extractAudioLanguageList(String languages) {
         log.info("languages: " + languages);
         if (languages.contains("<br><strong>*</strong>languages with full audio support")) {
             languages = languages.replace("<br><strong>*</strong>languages with full audio support", "");
@@ -58,7 +58,7 @@ public class LanguageService {
         return languageList.stream().collect(Collectors.toSet());
     }
 
-    public Set<Language> extractSubtitleLanguageList(String languages, CheckedGame checkedGame) {
+    public Set<Language> extractSubtitleLanguageList(String languages) {
         log.info("languages: " + languages);
         if (languages.contains("<br><strong>*</strong>languages with full audio support")) {
             languages = languages.replace("<br><strong>*</strong>languages with full audio support", "");

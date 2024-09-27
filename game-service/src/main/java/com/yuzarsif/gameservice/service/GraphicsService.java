@@ -145,9 +145,15 @@ public class GraphicsService {
     }
 
     private Boolean checkIsGraphicsBrandValid(String graphics) {
-        graphics = graphics.substring(0, graphics.indexOf(" "));
-        List<String> validBrands = Arrays.asList("NVIDIA", "AMD", "OPENGL", "Intel", "NVidia", "Radeon", "Radeon(R)", "Nvidia", "NVIDIA®", "NVIDIA(R)", "AMD(R)", "Intel(R)", "NVIDA");
-        return validBrands.contains(graphics);
+        try {
+            graphics = graphics.substring(0, graphics.indexOf(" "));
+            List<String> validBrands = Arrays.asList("NVIDIA", "AMD", "OPENGL", "Intel", "NVidia", "Radeon", "Radeon(R)", "Nvidia", "NVIDIA®", "NVIDIA(R)", "AMD(R)", "Intel(R)", "NVIDA");
+            return validBrands.contains(graphics);
+        } catch (Exception e) {
+            log.error("Graphics: " + graphics + " is not valid");
+            log.error("Exception: " + e.getMessage());
+        }
+        return false;
     }
 
     public Set<Graphics> extractGraphicsForEpicGames(String graphics) {

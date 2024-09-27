@@ -33,14 +33,14 @@ public class SystemRequirement {
     @JoinColumn(name = "storage_id")
     private Storage storage;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "system_requirement_processors",
             joinColumns = @JoinColumn(name = "system_requirement_id"),
             inverseJoinColumns = @JoinColumn(name = "processor_id"))
     private Set<Processor> processors;
 
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "system_requirement_graphics",
             joinColumns = @JoinColumn(name = "system_requirement_id"),
             inverseJoinColumns = @JoinColumn(name = "graphics_id"))

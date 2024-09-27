@@ -13,11 +13,17 @@ import com.yuzarsif.gameservice.service.SystemRequirementService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Optional;
 
 @SpringBootApplication
+@EnableAsync
+@EnableCaching
+@EnableRetry
 public class GameServiceApplication {
 
     public static void main(String[] args) {
@@ -32,30 +38,30 @@ public class GameServiceApplication {
                                                PlatformRepository platformRepository,
                                                EpicClient epicClient) {
         return args -> {
-            Optional<Platform> steam = platformRepository.findByName("STEAM");
-            if (steam.isEmpty()) {
-                Platform platform = Platform
-                        .builder()
-                        .name("STEAM")
-                        .build();
-                platformRepository.save(platform);
-            }
-
-            Optional<Platform> epic = platformRepository.findByName("EPIC");
-            if (epic.isEmpty()) {
-                Platform platform = Platform
-                        .builder()
-                        .name("EPIC")
-                        .build();
-                platformRepository.save(platform);
-            }
-            //gameSaveService.saveGamesBySteamClient();
+//            Optional<Platform> steam = platformRepository.findByName("STEAM");
+//            if (steam.isEmpty()) {
+//                Platform platform = Platform
+//                        .builder()
+//                        .name("STEAM")
+//                        .build();
+//                platformRepository.save(platform);
+//            }
+//
+//            Optional<Platform> epic = platformRepository.findByName("EPIC");
+//            if (epic.isEmpty()) {
+//                Platform platform = Platform
+//                        .builder()
+//                        .name("EPIC")
+//                        .build();
+//                platformRepository.save(platform);
+//            }
+            gameSaveService.saveGamesBySteamClient();
 
 //            CatalogOfferResponse catalogOffer = epicClient.getCatalogOffer("en", "e6958dc0e1fe43a38cca9eab6bb96aca", "014e225d587d41ea80c0adb3f33041d0", "US");
 //
 //            System.out.println(catalogOffer);
 
-            gameSaveService.startEpicGames();
+            //gameSaveService.startEpicGames();
 
         };
     }

@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.yuzarsif.gameservice.client.steam.response.AppDetailsResponse;
 import com.yuzarsif.gameservice.client.steam.response.AppListResponse;
 import com.yuzarsif.gameservice.utils.PcRequirementsDeserializer;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -35,7 +39,14 @@ public class SteamClient {
         return response.getBody();
     }
 
+    @Cacheable("appDetails")
+    @Retryable(value = { HttpClientErrorException.TooManyRequests.class }, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public AppDetailsResponse getAppDetails(String appId) throws JsonProcessingException {
+        return callSteamApi(appId);
+    }
+
+    @Retryable(value = { HttpClientErrorException.TooManyRequests.class }, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    public AppDetailsResponse callSteamApi(String appId) throws JsonProcessingException {
         ResponseEntity<String> response = restTemplate.getForEntity("https://store.steampowered.com/api/appdetails?appids=" + appId, String.class);
 
         String jsonString = response.getBody();
@@ -57,6 +68,9 @@ public class SteamClient {
                     return convertedGameDetails;
                 }
             }
+        } catch (HttpClientErrorException.TooManyRequests e) {
+            System.out.println("Too many requests hatası yakalandı: " + e.getMessage());
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
         }

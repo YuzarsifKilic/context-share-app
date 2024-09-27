@@ -58,6 +58,8 @@ public class ReviewService {
                     .build();
 
             reviewRepository.save(review);
+
+            gameClient.addComment(createReviewRequest.contextId());
         }
     }
 
@@ -122,6 +124,8 @@ public class ReviewService {
         }
 
         Review savedReview = reviewRepository.save(review);
+
+        gameClient.addComment(review.getContextId());
 
         // TODO: send notification
         replyProducer.produceReviewNotification(new ReviewNotification(

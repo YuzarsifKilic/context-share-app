@@ -14,6 +14,7 @@ import com.yuzarsif.gameservice.repository.StoreRepository;
 import com.yuzarsif.gameservice.utils.DateConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -45,11 +46,11 @@ public class GameSaveService {
         running = true;
         clientThread = new Thread(() -> {
             while (running) {
-                try {
-                    this.saveGamesBySteamClient();
-                } catch (JsonProcessingException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+//                try {
+//                    //this.saveGameAsync();
+//                } catch (JsonProcessingException | InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
             }
         });
         clientThread.start();
@@ -65,210 +66,207 @@ public class GameSaveService {
     public void saveGamesBySteamClient() throws JsonProcessingException, InterruptedException {
         AppListResponse apps = steamClient.getApps();
 
-        for (AppListResponse.App app: apps.getApplist().getApps()) {
-            log.info("Check game: " + app.getName());
-            Optional<Game> optionalGame = gameRepository.findByName(app.getName());
-            if (!Objects.equals(app.getName(), "")) {
-                if (!checkedGameService.existsByGameId(String.valueOf(app.getAppid()))) {
-                    // TODO: Platform will be os system like a windows, linux or macos
-                    if (optionalGame.isEmpty()) {
-                        log.info("Game didnt check before: " + app.getName());
-                        AppDetailsResponse appDetails = steamClient.getAppDetails(app.getAppid().toString());
-                        CheckedGame checkedGame = new CheckedGame();
-                        checkedGame.setGameId(String.valueOf(app.getAppid()));
-                        if (appDetails != null && !appDetails.getData().getRelease_date().coming_soon && appDetails.getData().getType().equals("game")) {
-                            log.info("Game creating... " + app.getName());
-                            Game game = Game
-                                    .builder()
-                                    .name(app.getName())
-                                    .description(appDetails.getData().getAbout_the_game())
-                                    .commentCount(0)
-                                    .build();
+        for (AppListResponse.App app : apps.getApplist().getApps()) {
+            if (!app.getName().isEmpty()) {
+                log.info("Check game: " + app.getName());
+                saveGameAsync(app);
+            }
+        }
+    }
 
-                            if (!appDetails.getData().getRelease_date().coming_soon && appDetails.getData().getRelease_date().date != null && !appDetails.getData().getRelease_date().date.isEmpty() && appDetails.getData().getRelease_date().date.length() > 8) {
-                                game.setReleaseDate(DateConverter.steamDateToJavaDate(appDetails.getData().getRelease_date().getDate()));
-                            }
 
-                            if (appDetails.getData().getDevelopers() != null && !appDetails.getData().getDevelopers().isEmpty()) {
-                                Set<Developer> developerSet = new HashSet<>();
-                                ArrayList<String> developers = appDetails.getData().getDevelopers();
-                                for (String developer: developers) {
-                                    if (developerService.findByName(developer).isEmpty()) {
-                                        Developer savedDeveloper = developerService.create(new CreateDeveloperRequest(developer));
-                                        developerSet.add(savedDeveloper);
-                                    }
-                                }
-                                game.setDevelopers(developerSet);
-                            }
+    @Async
+    public void saveGameAsync(AppListResponse.App app) throws JsonProcessingException, InterruptedException {
+        Optional<Game> optionalGame = gameRepository.findByName(app.getName());
+        if (optionalGame.isEmpty()) {
+            log.info("Game didnt check before: " + app.getName());
+            AppDetailsResponse appDetails = steamClient.getAppDetails(app.getAppid().toString());
+            if (appDetails != null && !appDetails.getData().getRelease_date().coming_soon && appDetails.getData().getType().equals("game")) {
+                log.info("Game creating... " + app.getName());
+                Game game = Game
+                        .builder()
+                        .name(app.getName())
+                        .description(appDetails.getData().getAbout_the_game())
+                        .commentCount(0)
+                        .build();
 
-                            if (appDetails.getData().getPublishers() != null && !appDetails.getData().getPublishers().isEmpty()) {
-                                Set<Publisher> publisherSet = new HashSet<>();
-                                ArrayList<String> publishers = appDetails.getData().getPublishers();
-                                for (String publisher: publishers) {
-                                    if (publisherService.findByName(publisher).isEmpty()) {
-                                        Publisher savedPublisher = publisherService.create(new CreatePublisherRequest(publisher));
-                                        publisherSet.add(savedPublisher);
-                                    }
-                                }
-                                game.setPublishers(publisherSet);
-                            }
+                if (!appDetails.getData().getRelease_date().coming_soon && appDetails.getData().getRelease_date().date != null && !appDetails.getData().getRelease_date().date.isEmpty() && appDetails.getData().getRelease_date().date.length() > 8) {
+                    game.setReleaseDate(DateConverter.steamDateToJavaDate(appDetails.getData().getRelease_date().getDate()));
+                }
 
-                            if (appDetails.getData().getCategories() != null && !appDetails.getData().getCategories().isEmpty()) {
-                                ArrayList<AppDetailsResponse.Category> categories = appDetails.getData().getCategories();
-                                Set<Feature> featureSet = new HashSet<>();
-                                for (AppDetailsResponse.Category category: categories) {
-                                    if (featureService.findByName(category.getDescription()).isEmpty()) {
-                                        Feature savedFeature = featureService.create(new CreateFeatureRequest(category.getDescription()));
-                                        featureSet.add(savedFeature);
-                                    }
-                                }
-                                game.setFeatures(featureSet);
-                            }
+                if (appDetails.getData().getDevelopers() != null && !appDetails.getData().getDevelopers().isEmpty()) {
+                    log.info("Developers: " + appDetails.getData().getDevelopers());
+                    Set<Developer> developerSet = new HashSet<>();
+                    for (String developer: appDetails.getData().getDevelopers()) {
+                        developerService.findByName(developer).ifPresentOrElse(developerSet::add, () -> {
+                            Developer savedDeveloper = developerService.create(new CreateDeveloperRequest(developer));
+                            developerSet.add(savedDeveloper);
+                        });
+                    }
+                    game.setDevelopers(developerSet);
+                }
 
-                            if (appDetails.getData().getGenres() != null && !appDetails.getData().getGenres().isEmpty()) {
-                                ArrayList<AppDetailsResponse.Genre> genres = appDetails.getData().getGenres();
-                                Set<Genre> genreSet = new HashSet<>();
-                                for (AppDetailsResponse.Genre genre: genres) {
-                                    if (genreService.findByName(genre.getDescription()).isEmpty()) {
-                                        Genre savedGenre = genreService.create(new CreateGenreRequest(genre.getDescription()));
-                                        genreSet.add(savedGenre);
-                                    }
-                                }
-                                game.setGenres(genreSet);
-                            }
+                if (appDetails.getData().getPublishers() != null && !appDetails.getData().getPublishers().isEmpty()) {
+                    log.info("Publishers: " + appDetails.getData().getPublishers());
+                    Set<Publisher> publisherSet = new HashSet<>();
+                    for (String publisher : appDetails.getData().getPublishers()) {
+                        publisherService.findByName(publisher).ifPresentOrElse(publisherSet::add, () -> {
+                            Publisher savedPublisher = publisherService.create(new CreatePublisherRequest(publisher));
+                            publisherSet.add(savedPublisher);
+                        });
+                    }
+                    game.setPublishers(publisherSet);
+                }
 
-                            if (appDetails.getData().getSupported_languages() != null && !appDetails.getData().getSupported_languages().isEmpty()) {
-                                System.out.println(appDetails.getData().getSupported_languages());
-                                Set<Language> audioLanguageList = languageService.extractAudioLanguageList(appDetails.getData().getSupported_languages(), checkedGame);
-                                Set<Language> subtitleLanguageList = languageService.extractSubtitleLanguageList(appDetails.getData().getSupported_languages(), checkedGame);
-                                if (!audioLanguageList.isEmpty()) {
-                                    game.setAudioLanguages(audioLanguageList);
-                                }
-                                if (!subtitleLanguageList.isEmpty()) {
-                                    game.setSubtitleLanguages(subtitleLanguageList);
-                                }
-                                log.info("languages: " + audioLanguageList + " " + subtitleLanguageList);
-                            }
+                if (appDetails.getData().getCategories() != null && !appDetails.getData().getCategories().isEmpty()) {
+                    log.info("Categories: " + appDetails.getData().getCategories());
+                    Set<Feature> featureSet = new HashSet<>();
+                    for (AppDetailsResponse.Category category : appDetails.getData().getCategories()) {
+                        featureService.findByName(category.getDescription()).ifPresentOrElse(featureSet::add, () -> {
+                            Feature savedFeature = featureService.create(new CreateFeatureRequest(category.getDescription()));
+                            featureSet.add(savedFeature);
+                        });
+                    }
+                    game.setFeatures(featureSet);
+                }
 
-                            Set<Platform> platforms = new HashSet<>();
+                if (appDetails.getData().getGenres() != null && !appDetails.getData().getGenres().isEmpty()) {
+                    log.info("Genres: " + appDetails.getData().getGenres());
+                    Set<Genre> genreSet = new HashSet<>();
+                    for (AppDetailsResponse.Genre genre : appDetails.getData().getGenres()) {
+                        genreService.findByName(genre.getDescription()).ifPresentOrElse(genreSet::add, () -> {
+                            Genre savedGenre = genreService.create(new CreateGenreRequest(genre.getDescription()));
+                            genreSet.add(savedGenre);
+                        });
+                    }
+                    game.setGenres(genreSet);
+                }
 
-                            if (appDetails.getData().getPlatforms() != null) {
-                                if (appDetails.getData().getPlatforms().windows) {
-                                    if (platformService.findByName("Windows").isEmpty()) {
-                                        Platform savedPlatform = platformService.create(new CreatePlatformRequest("Windows"));
-                                        platforms.add(savedPlatform);
-                                    } else {
-                                        platforms.add(platformService.findByName("Windows").get());
-                                    }
-                                } if (appDetails.getData().getPlatforms().mac) {
-                                    if (platformService.findByName("Mac").isEmpty()) {
-                                        Platform savedPlatform = platformService.create(new CreatePlatformRequest("Mac"));
-                                        platforms.add(savedPlatform);
-                                    } else {
-                                        platforms.add(platformService.findByName("Mac").get());
-                                    }
-                                } if (appDetails.getData().getPlatforms().linux) {
-                                    if (platformService.findByName("Linux").isEmpty()) {
-                                        Platform savedPlatform = platformService.create(new CreatePlatformRequest("Linux"));
-                                        platforms.add(savedPlatform);
-                                    } else {
-                                        platforms.add(platformService.findByName("Linux").get());
-                                    }
-                                }
-                                game.setPlatforms(platforms);
+                if (appDetails.getData().getSupported_languages() != null && !appDetails.getData().getSupported_languages().isEmpty()) {
+                    System.out.println(appDetails.getData().getSupported_languages());
+                    Set<Language> audioLanguageList = languageService.extractAudioLanguageList(appDetails.getData().getSupported_languages());
+                    Set<Language> subtitleLanguageList = languageService.extractSubtitleLanguageList(appDetails.getData().getSupported_languages());
+                    if (!audioLanguageList.isEmpty()) {
+                        game.setAudioLanguages(audioLanguageList);
+                    }
+                    if (!subtitleLanguageList.isEmpty()) {
+                        game.setSubtitleLanguages(subtitleLanguageList);
+                    }
+                    log.info("languages: " + audioLanguageList + " " + subtitleLanguageList);
+                }
 
-                            }
+                Set<Platform> platforms = new HashSet<>();
 
-                            game.setPlatforms(platforms);
-
-                            if (appDetails.getData().getPc_requirements() != null && appDetails.getData().getPc_requirements().minimum != null) {
-                                SystemRequirement systemRequirement = systemRequirementService.extractSystemRequirements(appDetails.getData().getPc_requirements().minimum);
-
-                                if (systemRequirement != null) {
-                                    game.setMinSystemRequirement(systemRequirement);
-                                }
-                            }
-
-                            if (appDetails.getData().getPc_requirements() != null && appDetails.getData().getPc_requirements().recommended != null) {
-                                log.info("recommended requirements: " + appDetails.getData().getPc_requirements().recommended);
-                                SystemRequirement systemRequirement = systemRequirementService.extractSystemRequirements(appDetails.getData().getPc_requirements().recommended);
-
-                                if (systemRequirement != null) {
-                                    game.setRecommendedSystemRequirement(systemRequirement);
-                                }
-                            }
-
-                            Game savedGame = gameRepository.save(game);
-
-                            if (appDetails.getData().getHeader_image() != null && !appDetails.getData().getHeader_image().isEmpty()) {
-                                Photo photo = new Photo();
-                                photo.setType("main");
-                                photo.setThumbnailUrl(appDetails.getData().getHeader_image());
-                                photo.setGame(savedGame);
-                                photoService.createPhoto(photo);
-                                savedGame.setMainImage(appDetails.getData().getHeader_image());
-                                gameRepository.save(savedGame);
-                            }
-
-                            if (appDetails.getData().getScreenshots() != null && !appDetails.getData().getScreenshots().isEmpty()) {
-                                int index = 1;
-                                for (AppDetailsResponse.Screenshot screenshot: appDetails.getData().getScreenshots()) {
-                                    Photo photo = new Photo();
-                                    photo.setType("screenshot_" + index);
-                                    photo.setThumbnailUrl(screenshot.path_thumbnail);
-                                    photo.setFullUrl(screenshot.path_full);
-                                    photo.setGame(savedGame);
-                                    photoService.createPhoto(photo);
-                                    index++;
-                                }
-                            }
-
-                            if (appDetails.getData().getMovies() != null && !appDetails.getData().getMovies().isEmpty()) {
-                                Video video = new Video();
-                                video.setVideoUrl(appDetails.getData().getMovies().get(0).getWebm().getMax());
-                                video.setGame(savedGame);
-                                video.setThumbnailUrl(appDetails.getData().getMovies().get(0).getThumbnail());
-                                videoService.createVideo(video);
-                            }
-                            log.info("Game created: " + app.getName() + " id: " + savedGame.getId());
-
-                            String gameUrl = "https://store.steampowered.com/app/" + app.getAppid();
-                            Float price = 0f;
-                            String currency = null;
-                            if (appDetails.getData().getPrice_overview() != null) {
-                                price = (float) appDetails.getData().getPrice_overview().initial / 100;
-                                currency = appDetails.getData().getPrice_overview().currency;
-                            }
-                            storeService.createStore(new CreateStoreRequest(StoreType.STEAM, price, Currency.USD.toString(), gameUrl, savedGame.getId()));
-                            checkedGameService.save(checkedGame);
-
-                            Thread.sleep(3000);
+                if (appDetails.getData().getPlatforms() != null) {
+                    if (appDetails.getData().getPlatforms().windows) {
+                        if (platformService.findByName("Windows").isEmpty()) {
+                            Platform savedPlatform = platformService.create(new CreatePlatformRequest("Windows"));
+                            platforms.add(savedPlatform);
                         } else {
-                            checkedGameService.save(checkedGame);
-                        }
-                    } else {
-                        log.info("Game already exists: " + app.getName());
-                        log.info("Checking store ...");
-                        Boolean checkStore = storeService.checkStore(app.getName(), StoreType.STEAM);
-                        if (!checkStore) {
-                            log.info("Creating store ...");
-                            AppDetailsResponse appDetails = steamClient.getAppDetails(app.getAppid().toString());
-                            String gameUrl = "https://store.steampowered.com/app/" + app.getAppid();
-                            Float price = 0f;
-                            String currency = null;
-                            if (appDetails.getData().getPrice_overview() != null) {
-                                price = (float) appDetails.getData().getPrice_overview().initial / 100;
-                                currency = appDetails.getData().getPrice_overview().currency;
-                            }
-                            storeService.createStore(new CreateStoreRequest(StoreType.STEAM, price, Currency.USD.toString(), gameUrl, optionalGame.get().getId()));
-                        } else {
-                            log.info("Store already exists: " + app.getName());
+                            platforms.add(platformService.findByName("Windows").get());
                         }
                     }
+                    if (appDetails.getData().getPlatforms().mac) {
+                        if (platformService.findByName("Mac").isEmpty()) {
+                            Platform savedPlatform = platformService.create(new CreatePlatformRequest("Mac"));
+                            platforms.add(savedPlatform);
+                        } else {
+                            platforms.add(platformService.findByName("Mac").get());
+                        }
+                    }
+                    if (appDetails.getData().getPlatforms().linux) {
+                        if (platformService.findByName("Linux").isEmpty()) {
+                            Platform savedPlatform = platformService.create(new CreatePlatformRequest("Linux"));
+                            platforms.add(savedPlatform);
+                        } else {
+                            platforms.add(platformService.findByName("Linux").get());
+                        }
+                    }
+                    game.setPlatforms(platforms);
 
                 }
+
+                game.setPlatforms(platforms);
+
+                if (appDetails.getData().getPc_requirements() != null && appDetails.getData().getPc_requirements().minimum != null) {
+                    SystemRequirement systemRequirement = systemRequirementService.extractSystemRequirements(appDetails.getData().getPc_requirements().minimum);
+
+                    if (systemRequirement != null) {
+                        game.setMinSystemRequirement(systemRequirement);
+                    }
+                }
+
+                if (appDetails.getData().getPc_requirements() != null && appDetails.getData().getPc_requirements().recommended != null) {
+                    log.info("recommended requirements: " + appDetails.getData().getPc_requirements().recommended);
+                    SystemRequirement systemRequirement = systemRequirementService.extractSystemRequirements(appDetails.getData().getPc_requirements().recommended);
+
+                    if (systemRequirement != null) {
+                        game.setRecommendedSystemRequirement(systemRequirement);
+                    }
+                }
+
+                Game savedGame = gameRepository.save(game);
+
+                if (appDetails.getData().getHeader_image() != null && !appDetails.getData().getHeader_image().isEmpty()) {
+                    Photo photo = new Photo();
+                    photo.setType("main");
+                    photo.setThumbnailUrl(appDetails.getData().getHeader_image());
+                    photo.setGame(savedGame);
+                    photoService.createPhoto(photo);
+                    savedGame.setMainImage(appDetails.getData().getHeader_image());
+                    gameRepository.save(savedGame);
+                }
+
+                if (appDetails.getData().getScreenshots() != null && !appDetails.getData().getScreenshots().isEmpty()) {
+                    int index = 1;
+                    for (AppDetailsResponse.Screenshot screenshot : appDetails.getData().getScreenshots()) {
+                        Photo photo = new Photo();
+                        photo.setType("screenshot_" + index);
+                        photo.setThumbnailUrl(screenshot.path_thumbnail);
+                        photo.setFullUrl(screenshot.path_full);
+                        photo.setGame(savedGame);
+                        photoService.createPhoto(photo);
+                        index++;
+                    }
+                }
+
+                if (appDetails.getData().getMovies() != null && !appDetails.getData().getMovies().isEmpty()) {
+                    Video video = new Video();
+                    video.setVideoUrl(appDetails.getData().getMovies().get(0).getWebm().getMax());
+                    video.setGame(savedGame);
+                    video.setThumbnailUrl(appDetails.getData().getMovies().get(0).getThumbnail());
+                    videoService.createVideo(video);
+                }
+                log.info("Game created: " + app.getName() + " id: " + savedGame.getId());
+
+                String gameUrl = "https://store.steampowered.com/app/" + app.getAppid();
+                Float price = 0f;
+                String currency = null;
+                if (appDetails.getData().getPrice_overview() != null) {
+                    price = (float) appDetails.getData().getPrice_overview().initial / 100;
+                    currency = appDetails.getData().getPrice_overview().currency;
+                }
+                storeService.createStore(new CreateStoreRequest(StoreType.STEAM, price, Currency.USD.toString(), gameUrl, savedGame.getId()));
+
+                Thread.sleep(3000);
+            }
+        } else {
+            log.info("Game already exists: " + app.getName());
+            log.info("Checking store ...");
+            Boolean checkStore = storeService.checkStore(app.getName(), StoreType.STEAM);
+            if (!checkStore) {
+                log.info("Creating store ...");
+                AppDetailsResponse appDetails = steamClient.getAppDetails(app.getAppid().toString());
+                String gameUrl = "https://store.steampowered.com/app/" + app.getAppid();
+                Float price = 0f;
+                String currency = null;
+                if (appDetails.getData().getPrice_overview() != null) {
+                    price = (float) appDetails.getData().getPrice_overview().initial / 100;
+                    currency = appDetails.getData().getPrice_overview().currency;
+                }
+                storeService.createStore(new CreateStoreRequest(StoreType.STEAM, price, Currency.USD.toString(), gameUrl, optionalGame.get().getId()));
             } else {
-                log.info("Name is empty: " + app.getName());
+                log.info("Store already exists: " + app.getName());
             }
         }
     }
