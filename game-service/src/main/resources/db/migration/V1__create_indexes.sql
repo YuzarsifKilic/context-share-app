@@ -27,3 +27,5 @@ CREATE INDEX index_feature_name ON feature(name);
 
 -- Index genre_name
 CREATE INDEX index_genre_name ON genre(name);
+
+ALTER TABLE game MODIFY description TEXT;

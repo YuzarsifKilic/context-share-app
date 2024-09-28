@@ -70,6 +70,7 @@ public class GameSaveService {
             if (!app.getName().isEmpty()) {
                 log.info("Check game: " + app.getName());
                 saveGameAsync(app);
+                Thread.sleep(1000);
             }
         }
     }

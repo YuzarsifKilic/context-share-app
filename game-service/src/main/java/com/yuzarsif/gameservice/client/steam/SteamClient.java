@@ -49,6 +49,11 @@ public class SteamClient {
     public AppDetailsResponse callSteamApi(String appId) throws JsonProcessingException {
         ResponseEntity<String> response = restTemplate.getForEntity("https://store.steampowered.com/api/appdetails?appids=" + appId, String.class);
 
+        if (response.getBody() == null) {
+            System.out.println("API'den boş bir yanıt alındı.");
+            return null; // Ya da farklı bir fallback işlemi yapabilirsin
+        }
+
         String jsonString = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         SimpleModule simpleModule = new SimpleModule();
